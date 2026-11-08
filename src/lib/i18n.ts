@@ -63,9 +63,9 @@ export const copy = {
   featuredMaterial: l('Në fokus / Material', 'Во фокус / Материјал', 'In focus / Material'),
   viewMaterial: l('Shikoni materialin', 'Погледнете го материјалот', 'View material'),
   studioIntro: l(
-    'Një qasje e menduar ndaj formës, dritës dhe jetës së përditshme. Archstudio Garnet është studioja jonë e arkitekturës dhe dizajnit të interierit.',
-    'Промислен пристап кон формата, светлината и секојдневниот живот. Archstudio Garnet е нашето студио за архитектура и дизајн на ентериер.',
-    'A considered approach to form, light and everyday life. Archstudio Garnet is our architecture and interior design studio.',
+    'Në Archstudio Garnet, puna nis me të kuptuarit e projektit dhe të njerëzve për të cilët bëhet. Si studio e arkitekturës dhe dizajnit të interierit, ajo merret me projekte banimi dhe biznesi në etapa të ndryshme.',
+    'Во Archstudio Garnet, работата започнува со разбирање на проектот и луѓето за кои се создава. Како студио за архитектура и дизајн на ентериер, работи на станбени и деловни проекти во различни фази.',
+    'At Archstudio Garnet, work begins with understanding the project and the people it is for. As an architecture and interior design studio, it works on residential and business projects at different stages.',
   ),
   meetStudio: l('Njihuni me studion', 'Запознајте го студиото', 'Meet the studio'),
   startProject: l('Nisni një projekt', 'Започнете проект', 'Start a project'),
