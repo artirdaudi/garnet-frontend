@@ -6,13 +6,14 @@ import { Picture } from './media';
 
 export function HeroBackground({ images, locale }: { images: Media[]; locale: Locale }) {
   const [active, setActive] = useState(0);
+  const visible = active % images.length;
   useEffect(() => {
     if (images.length < 2) return;
     const timer = window.setInterval(() => setActive((index) => (index + 1) % images.length), 6000);
     return () => window.clearInterval(timer);
   }, [images.length]);
   return <div className="hero-backgrounds">{images.map((media, index) =>
-    <div key={media.id + '-' + index} className={index === active ? 'hero-background active' : 'hero-background'} aria-hidden={index !== active}>
+    <div key={media.id + '-' + index} className={index === visible ? 'hero-background active' : 'hero-background'} aria-hidden={index !== visible}>
       <Picture media={media} locale={locale} priority={index === 0} sizes="100vw" />
     </div>)}</div>;
 }

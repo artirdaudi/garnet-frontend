@@ -5,6 +5,7 @@ import { images } from '@/data/media';
 import { Picture } from '@/components/media';
 import { PageHeading, ContactCTA, TextLink, DemoNote } from '@/components/ui';
 import { StudioPreview } from '@/components/sections';
+import { BrandStatement } from '@/components/brand-statement';
 import { getPageContent } from '@/lib/repository';
 export async function generateMetadata({ params }: PageParams) {
   const locale = await routeLocale(params);
@@ -29,12 +30,7 @@ export default async function AboutPage({ params }: PageParams) {
       <div className="wrap">
         <DemoNote locale={locale} kind="photo" />
       </div>
-      <section className="brand-statement wrap">
-        <span className="statement-symbol" aria-hidden="true">
-          ＋
-        </span>
-        <p>{t(locale, 'statement')}</p>
-      </section>
+      <BrandStatement lines={t(locale, 'statement').split('\n')} location={t(locale, 'location')} />
       <StudioPreview locale={locale} />
       <ContactCTA locale={locale} />
     </>

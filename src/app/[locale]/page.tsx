@@ -3,12 +3,15 @@ import { VisionArt } from '@/components/vision-art';
 import { routeLocale, type PageParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
 import { t } from '@/lib/i18n';
-import { getFeaturedProjects, getMaterials, getCategories, getPageContent } from '@/lib/repository';
+import { getFeaturedProjects, getMaterials, getPageContent, getProjectBySlug, getHeroImages } from '@/lib/repository';
 import { images } from '@/data/media';
 import { Picture } from '@/components/media';
 import { HeroBackground } from '@/components/hero-background';
 import { Arrow, ContactCTA, DemoNote, SectionHeading, TextLink } from '@/components/ui';
-import { MaterialGrid, ProjectGrid } from '@/components/cards';
+import { MaterialGrid } from '@/components/cards';
+import { ProjectShowcase } from '@/components/project-showcase';
+import { BrandStatement } from '@/components/brand-statement';
+import { MaterialsShowcase } from '@/components/materials-showcase';
 import { StudioPreview } from '@/components/sections';
 export async function generateMetadata({ params }: PageParams) {
   const locale = await routeLocale(params);
@@ -16,15 +19,19 @@ export async function generateMetadata({ params }: PageParams) {
 }
 export default async function Home({ params }: PageParams) {
   const locale = await routeLocale(params);
-  const [projects, materials, categories, homeContent] = await Promise.all([getFeaturedProjects(), getMaterials(), getCategories(), getPageContent('home')]);
+  const [projects, materials, homeContent, heroImages] = await Promise.all([getFeaturedProjects(), getMaterials(), getPageContent('home'), getHeroImages()]);
+  const featured = projects.slice(0, 4);
+  const projectDetails = await Promise.allSettled(featured.map((project) => getProjectBySlug(project.slug)));
+  const showcaseProjects = featured.map((project, index) => projectDetails[index].status === 'fulfilled' ? projectDetails[index].value || project : project);
   const apollo = materials[0];
   const hero = homeContent?.sections.find((section) => section.key === 'hero');
   const introduction = homeContent?.sections.find((section) => section.key === 'introduction');
   const heroLines = (hero?.title[locale] || t(locale, 'heroLine')).split('\n');
+  const statementLines = t(locale, 'materialsStatement').split('\n');
   return (
     <>
       <section className="hero">
-        <HeroBackground images={[images.hero]} locale={locale} />
+        <HeroBackground images={heroImages.length ? heroImages : [images.hero]} locale={locale} />
         <div className="hero-shade" />
         <div className="hero-content wrap">
           <p className="eyebrow hero-eyebrow">
@@ -70,37 +77,14 @@ export default async function Home({ params }: PageParams) {
         <VisionArt alt={t(locale, 'disciplines')} />
       </section>
       <section className="selected-projects wrap">
-        <SectionHeading number="02" eyebrow={t(locale, 'projects')} title={t(locale, 'selected')}>
-          <TextLink href={`/${locale}/projects`}>{t(locale, 'allProjects')}</TextLink>
+        <SectionHeading eyebrow={t(locale, 'projects')} title={t(locale, 'selected')}>
+          <Link className="showcase-all-link" href={`/${locale}/projects`}>{t(locale, 'allProjects')}</Link>
         </SectionHeading>
-        <ProjectGrid projects={projects.slice(0, 3)} locale={locale} editorial />
+        <ProjectShowcase projects={showcaseProjects} locale={locale} />
         <DemoNote locale={locale} />
       </section>
-      <section className="brand-statement wrap">
-        <span className="statement-symbol" aria-hidden="true">
-          ＋
-        </span>
-        <p>{t(locale, 'statement')}</p>
-        <span className="eyebrow">Garnet — {t(locale, 'location')}</span>
-      </section>
-      <section className="materials-section wrap">
-        <SectionHeading number="03" eyebrow={t(locale, 'materials')} title={t(locale, 'materialsIntro')}>
-          <TextLink href={`/${locale}/materials`}>{t(locale, 'allMaterials')}</TextLink>
-        </SectionHeading>
-        <div className="category-list">
-          {categories.map((category, index) => (
-            <Link className="category-row" href={`/${locale}/materials/category/${category.slug}`} key={category.slug}>
-              <span className="category-index">0{index + 1}</span>
-              <Picture media={category.image} locale={locale} sizes="(max-width: 700px) 35vw, 25vw" />
-              <div>
-                <h3>{category.title[locale]}</h3>
-                <p>{category.description[locale]}</p>
-              </div>
-              <Arrow />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <BrandStatement lines={statementLines} location={t(locale, 'location')} />
+      <MaterialsShowcase locale={locale} />
       {apollo && <section className="featured-material">
         <Picture media={apollo.coverImage} locale={locale} sizes="100vw" />
         <div className="featured-material-content">

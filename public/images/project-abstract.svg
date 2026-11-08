@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1800" fill="none">
+  <g stroke="#895943" stroke-linecap="round" opacity=".45">
+    <path stroke-width="2" d="M-210 690C164 317 477 203 842 333c259 92 322 255 582 217 131-19 246-89 417-188"/>
+    <path stroke-width="1.5" d="M-218 737C164 364 472 250 826 380c261 96 334 260 600 221 126-19 259-96 419-186"/>
+    <path stroke-width="1" d="M-224 785C151 411 470 300 811 429c261 99 346 264 618 222 139-22 265-91 416-184"/>
+    <path stroke-width="2" d="M-310 1570c299-247 554-372 839-352 397 28 511 380 1007 197 184-68 303-176 402-272"/>
+    <path stroke-width="1.5" d="M-313 1618c309-252 567-378 849-351 398 39 521 381 1004 196 187-72 306-175 404-267"/>
+    <path stroke-width="1" d="M-317 1668c317-263 581-385 861-349 399 51 532 380 1001 193 188-75 309-174 406-259"/>
+  </g>
+  <g stroke="#9f6d53" opacity=".3">
+    <path stroke-width="2" d="m1070-90 561 495-419 474M1112-90l559 495-417 474M1154-90l559 495-415 474"/>
+    <path stroke-width="1.5" d="M-162 132 326 52l-104 624M-138 169l490-80-106 625"/>
+    <circle cx="1305" cy="1255" r="260" stroke-width="2"/>
+    <circle cx="1305" cy="1255" r="301" stroke-width="1"/>
+    <path stroke-width="1.5" d="M1045 1255h520m-260-260v520M157 1022h473m-236-236v472"/>
+  </g>
+  <g fill="#9f6d53" opacity=".3">
+    <circle cx="1305" cy="1255" r="5"/><circle cx="394" cy="1022" r="5"/><circle cx="840" cy="333" r="5"/>
+  </g>
+  <g stroke="#805440" opacity=".5" stroke-linecap="square">
+    <path stroke-width="2" d="M1316 178h72m-36-36v72M192 850h54m-27-27v54M1122 1660h72m-36-36v72"/>
+    <path stroke-width="1.5" d="M1269 122h166m-166-10v20m166-20v20M1248 134h208m-208-9v18m208-18v18M179 898h262m-262-8v16m262-16v16"/>
+    <path stroke-width="1.5" d="M1089 161a263 263 0 0 1 295 252M1074 160a279 279 0 0 1 312 269M964 1457a192 192 0 0 0 223 180"/>
+    <circle cx="219" cy="850" r="55" stroke-width="1.5"/>
+    <circle cx="219" cy="850" r="72" stroke-width="1" stroke-dasharray="5 13"/>
+    <path stroke-width="1" d="m181 811 76 76m0-76-76 76M1150 1640l16 16m-16 0 16-16"/>
+  </g>
+</svg>

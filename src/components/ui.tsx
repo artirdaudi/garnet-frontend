@@ -71,12 +71,9 @@ export function DemoNote({ locale, kind = 'projects' }: { locale: Locale; kind?:
 export function ContactCTA({ locale }: { locale: Locale }) {
   return (
     <section className="contact-cta wrap">
-      <p className="eyebrow">Garnet / {t(locale, 'contact')}</p>
       <div>
         <h2>{t(locale, 'ctaTitle')}</h2>
-        <Link href={`/${locale}/contact`} className="round-link" aria-label={t(locale, 'startProject')}>
-          <Arrow />
-        </Link>
+        <Link href={`/${locale}/contact`} className="contact-action">{t(locale, 'contact')}</Link>
       </div>
       <p>{t(locale, 'ctaText')}</p>
     </section>

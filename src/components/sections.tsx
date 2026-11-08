@@ -1,23 +1,20 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { Locale } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { site, team } from '@/data/site';
 import { Picture } from './media';
-import { TextLink } from './ui';
+import { StudioMotion } from './studio-motion';
 export function StudioPreview({ locale }: { locale: Locale }) {
   return (
-    <section className="studio-preview wrap">
+    <StudioMotion>
       <div className="studio-visual">
         <Picture media={images.residence} locale={locale} />
         <Image className="studio-logo" src={site.studioLogo} alt="Archstudio Garnet" width={120} height={120} />
       </div>
       <div className="studio-copy">
-        <p className="eyebrow">04 / Archstudio Garnet</p>
-        <h2>
-          {t(locale, 'architecture')}.<br />
-          {t(locale, 'interior')}.
-        </h2>
+        <h2>Archstudio Garnet</h2>
         <p>{t(locale, 'studioIntro')}</p>
         <div className="architect-names">
           {team.map((person) => (
@@ -27,9 +24,9 @@ export function StudioPreview({ locale }: { locale: Locale }) {
             </p>
           ))}
         </div>
-        <TextLink href={`/${locale}/archstudio`}>{t(locale, 'meetStudio')}</TextLink>
+        <Link className="text-link studio-link" href={`/${locale}/archstudio`}>{t(locale, 'meetStudio')}</Link>
       </div>
-    </section>
+    </StudioMotion>
   );
 }
 export function Team({ locale }: { locale: Locale }) {

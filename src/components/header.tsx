@@ -8,10 +8,9 @@ import type { Locale } from '@/lib/types';
 import { site } from '@/data/site';
 const nav: { key: CopyKey; path: string }[] = [
   { key: 'projects', path: 'projects' },
-  { key: 'archstudio', path: 'archstudio' },
   { key: 'tiles', path: 'materials/category/tiles' },
   { key: 'panels', path: 'materials/category/panels' },
-  { key: 'about', path: 'about' },
+  { key: 'archstudio', path: 'archstudio' },
   { key: 'contact', path: 'contact' },
 ];
 export function Header({ locale }: { locale: Locale }) {

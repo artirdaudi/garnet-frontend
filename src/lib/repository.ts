@@ -73,6 +73,21 @@ export const getProjects = cache(async () => {
   return rows.map((x) => asProject(x));
 });
 export async function getFeaturedProjects() { return (await getProjects()).filter((x) => x.featured); }
+export async function getHeroImages(): Promise<Media[]> {
+  try {
+    const rows = await read<unknown>('/api/v1/hero-images');
+    if (!Array.isArray(rows)) return [];
+    return rows.map(obj).filter((row) => typeof row.secure_url === 'string' && row.secure_url.startsWith('https://res.cloudinary.com/')).map((row) => ({
+      id: String(row.id),
+      url: String(row.secure_url),
+      alt: { sq: 'Fotografi e Garnet', mk: 'Фотографија на Гарнет', en: 'Garnet photograph' },
+      width: 1600,
+      height: 1000,
+    }));
+  } catch {
+    return [];
+  }
+}
 export async function getProjectBySlug(slug: string) {
   const response = await apiFetch(`/api/v1/projects/${encodeURIComponent(slug)}`);
   if (response.status === 404) return undefined;
@@ -103,10 +118,11 @@ export const getSiteSettings = cache(async () => {
   const address = str(row, 'address') || site.address;
   const city = str(row, 'city') || 'Tetovë';
   const instagram = str(row, 'instagram_url') || site.instagram;
+  const facebook = str(row, 'facebook_url') || site.facebook;
   const latitude = Number(row.latitude);
   const longitude = Number(row.longitude);
   return {
-    address, city, instagram, instagramHandle: instagram === site.instagram ? site.instagramHandle : '@' + instagram.split('/').filter(Boolean).at(-1),
+    address, city, instagram, facebook, instagramHandle: instagram === site.instagram ? site.instagramHandle : '@' + instagram.split('/').filter(Boolean).at(-1),
     directions: Number.isFinite(latitude) && Number.isFinite(longitude) && row.latitude != null && row.longitude != null
       ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ' ' + city)}`,

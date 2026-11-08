@@ -4,6 +4,7 @@ export const site = {
   studio: 'Archstudio Garnet',
   address: 'Blagoja Toska 19A',
   instagram: 'https://www.instagram.com/garnet_tetovo',
+  facebook: 'https://www.facebook.com/p/Garnet-Tetovo-100062932856397/',
   instagramHandle: '@garnet_tetovo',
   directions: 'https://www.google.com/maps/search/?api=1&query=Garnet+Blagoja+Toska+19A+Tetovo+North+Macedonia',
   logo: '/brand/garnet-mark-transparent.png',
