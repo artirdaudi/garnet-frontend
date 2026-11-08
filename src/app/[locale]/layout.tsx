@@ -6,10 +6,10 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   return (
-    <>
+    <div className="public-site">
       <Header locale={locale} />
       <main id="main">{children}</main>
       <Footer locale={locale} />
-    </>
+    </div>
   );
 }

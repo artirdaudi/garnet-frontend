@@ -11,6 +11,14 @@ function media(id: string, sq: string, mk: string, en: string, source: string): 
   };
 }
 export const images = {
+  visionInterior: {
+    id: 'vision-interior',
+    url: '/images/vision-interior.jpg',
+    alt: l('Interier me harqe guri dhe pemë ulliri', 'Ентериер со камени лакови и маслиново дрво', 'Interior with stone arches and an olive tree'),
+    width: 1824,
+    height: 1368,
+    source: 'https://www.spotti.com/progetti',
+  },
   hero: media(
     'hero',
     'Interier bashkëkohor me tone të ngrohta dhe dritë natyrale',

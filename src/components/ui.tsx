@@ -65,12 +65,8 @@ export function PageHeading({
   );
 }
 export function DemoNote({ locale, kind = 'projects' }: { locale: Locale; kind?: 'projects' | 'materials' | 'photo' }) {
-  return (
-    <p className="demo-note">
-      <span aria-hidden="true">○</span>{' '}
-      {t(locale, kind === 'projects' ? 'demoProjects' : kind === 'materials' ? 'demoMaterials' : 'demoPhoto')}
-    </p>
-  );
+  void locale; void kind;
+  return null;
 }
 export function ContactCTA({ locale }: { locale: Locale }) {
   return (

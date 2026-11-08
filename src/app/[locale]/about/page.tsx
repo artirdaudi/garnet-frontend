@@ -5,23 +5,25 @@ import { images } from '@/data/media';
 import { Picture } from '@/components/media';
 import { PageHeading, ContactCTA, TextLink, DemoNote } from '@/components/ui';
 import { StudioPreview } from '@/components/sections';
+import { getPageContent } from '@/lib/repository';
 export async function generateMetadata({ params }: PageParams) {
   const locale = await routeLocale(params);
   return metadata(locale, t(locale, 'about'), 'about', t(locale, 'aboutBody'));
 }
 export default async function AboutPage({ params }: PageParams) {
   const locale = await routeLocale(params);
+  const content = await getPageContent('about');
   return (
     <>
-      <PageHeading locale={locale} eyebrow={t(locale, 'about')} title={t(locale, 'aboutTitle')} />
+      <PageHeading locale={locale} eyebrow={t(locale, 'about')} title={content?.title[locale] || t(locale, 'aboutTitle')} />
       <section className="about-intro wrap">
         <Picture media={images.living} locale={locale} priority />
         <div>
           <p className="eyebrow">Garnet / {t(locale, 'location')}</p>
           <h2>{t(locale, 'introTitle')}</h2>
           <p>{t(locale, 'intro')}</p>
-          <p>{t(locale, 'aboutBody')}</p>
-          <TextLink href={`/${locale}/showroom`}>{t(locale, 'visitShowroom')}</TextLink>
+          <p>{content?.content[locale] || t(locale, 'aboutBody')}</p>
+          <TextLink href={`/${locale}/contact`}>{t(locale, 'contact')}</TextLink>
         </div>
       </section>
       <div className="wrap">

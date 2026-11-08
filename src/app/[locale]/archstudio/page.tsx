@@ -4,7 +4,7 @@ import { metadata } from '@/lib/seo';
 import { t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { site } from '@/data/site';
-import { getFeaturedProjects } from '@/lib/repository';
+import { getFeaturedProjects, getServices } from '@/lib/repository';
 import { Picture } from '@/components/media';
 import { PageHeading, ContactCTA, SectionHeading, DemoNote, TextLink } from '@/components/ui';
 import { Team } from '@/components/sections';
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageParams) {
 }
 export default async function StudioPage({ params }: PageParams) {
   const locale = await routeLocale(params);
-  const projects = await getFeaturedProjects();
+  const [projects, services] = await Promise.all([getFeaturedProjects(), getServices()]);
   return (
     <>
       <PageHeading locale={locale} eyebrow="Archstudio" title={'Archstudio\nGarnet.'} description={t(locale, 'studioIntro')} />
@@ -26,10 +26,10 @@ export default async function StudioPage({ params }: PageParams) {
       <section className="services wrap">
         <p className="eyebrow">{t(locale, 'services')}</p>
         <div>
-          {(['architecture', 'interior', 'concept', 'visualization', 'development'] as const).map((key, index) => (
-            <div className="service-row" key={key}>
+          {(services.length ? services : (['architecture', 'interior', 'concept', 'visualization', 'development'] as const).map((key) => ({ id: key, name: { sq: t('sq', key), mk: t('mk', key), en: t('en', key) } }))).map((service, index) => (
+            <div className="service-row" key={service.id}>
               <span>0{index + 1}</span>
-              <h2>{t(locale, key)}</h2>
+              <h2>{service.name[locale]}</h2>
             </div>
           ))}
         </div>

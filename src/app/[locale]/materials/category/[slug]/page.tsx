@@ -31,7 +31,7 @@ export default async function CategoryPage({ params }: DetailParams) {
       <section className="related-section wrap">
         <TextLink href={`/${locale}/materials`}>{t(locale, 'allMaterials')}</TextLink>
         <DemoNote locale={locale} kind="materials" />
-        <MaterialGrid materials={materials} locale={locale} />
+        {materials.length ? <MaterialGrid materials={materials} locale={locale} /> : <p className="material-empty">{{ sq: 'Ende nuk ka materiale në këtë kategori.', mk: 'Сè уште нема материјали во оваа категорија.', en: 'No materials in this category yet.' }[locale]}</p>}
       </section>
       <ContactCTA locale={locale} />
     </>

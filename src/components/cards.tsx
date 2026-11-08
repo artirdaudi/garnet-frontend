@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Locale, Material, Project } from '@/lib/types';
-import { t } from '@/lib/i18n';
+import { t, type CopyKey } from '@/lib/i18n';
 import { Picture } from './media';
 import { Arrow } from './ui';
 export function ProjectCard({ project, locale, index = 0 }: { project: Project; locale: Locale; index?: number }) {
@@ -16,14 +16,9 @@ export function ProjectCard({ project, locale, index = 0 }: { project: Project; 
       <div className="card-caption">
         <div>
           <h3>{project.title[locale]}</h3>
-          <p>
-            {t(locale, project.category)} <span>/</span> {project.location[locale]}
-          </p>
+          {project.location[locale] && <p>{project.location[locale]}</p>}
         </div>
-        <span className="card-year">
-          {project.year}
-          <Arrow />
-        </span>
+        <span className="card-year">{project.year > 0 ? project.year : ''}<Arrow /></span>
       </div>
     </Link>
   );
@@ -51,7 +46,7 @@ export function MaterialCard({ material, locale }: { material: Material; locale:
         <div>
           <h3>{material.name}</h3>
           <p>
-            {t(locale, material.category)} <span>/</span> {material.attributes.size}
+            {material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)} <span>/</span> {material.attributes.size}
           </p>
         </div>
         <Arrow />

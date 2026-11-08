@@ -3,12 +3,14 @@ import { useState, type FormEvent } from 'react';
 import type { Locale } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { submitEnquiry } from '@/lib/contact';
-export function ContactForm({ locale, material }: { locale: Locale; material?: string }) {
+export function ContactForm({ locale, material, materialId }: { locale: Locale; material?: string; materialId?: string }) {
   const [preview, setPreview] = useState(false);
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
+    setError('');
     const data = new FormData(event.currentTarget);
     try {
       await submitEnquiry({
@@ -19,8 +21,11 @@ export function ContactForm({ locale, material }: { locale: Locale; material?: s
         message: String(data.get('message')),
         locale,
         material,
+        materialId,
       });
       setPreview(true);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Dërgimi dështoi.');
     } finally {
       setPending(false);
     }
@@ -65,6 +70,7 @@ export function ContactForm({ locale, material }: { locale: Locale; material?: s
         </button>
       </div>
       <div className="form-feedback" role="status" aria-live="polite">
+        {error && <p>{error}</p>}
         {preview && (
           <>
             <span className="feedback-mark" aria-hidden="true">

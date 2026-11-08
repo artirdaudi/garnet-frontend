@@ -20,6 +20,7 @@ export function Gallery({ images, locale }: { images: Media[]; locale: Locale })
   function step(direction: number) {
     setSelected((current) => (current + direction + images.length) % images.length);
   }
+  if (images.length === 0) return null;
   return (
     <>
       <div className="gallery">

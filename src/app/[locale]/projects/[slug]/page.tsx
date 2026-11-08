@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { routeLocale, type DetailParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
-import { t } from '@/lib/i18n';
+import { t, type CopyKey } from '@/lib/i18n';
 import { getProjectBySlug, getProjects, getMaterialsForProject } from '@/lib/repository';
 import { Picture } from '@/components/media';
 import { Gallery } from '@/components/gallery';
@@ -22,21 +22,15 @@ export default async function ProjectDetail({ params }: DetailParams) {
   const [materials, projects] = await Promise.all([getMaterialsForProject(project.id), getProjects()]);
   const next = projects[(projects.findIndex((item) => item.id === project.id) + 1) % projects.length];
   const facts = [
-    ['type', t(locale, project.use)],
-    ['service', project.services.map((service) => service[locale]).join(', ')],
     ['place', project.location[locale]],
-    ['year', String(project.year)],
-    ['status', project.status[locale]],
     ['area', project.area],
-  ] as const;
+  ].filter(([, value]) => Boolean(value)) as [CopyKey, string][];
   return (
     <>
       <div className="detail-heading wrap">
         <TextLink href={`/${locale}/projects`}>{t(locale, 'projects')}</TextLink>
         <h1>{project.title[locale]}</h1>
-        <p>
-          {project.location[locale]} <span>/</span> {project.year}
-        </p>
+        {project.location[locale] && <p>{project.location[locale]}</p>}
       </div>
       <Picture media={project.coverImage} locale={locale} className="detail-cover" priority sizes="100vw" />
       <div className="wrap">
@@ -49,10 +43,10 @@ export default async function ProjectDetail({ params }: DetailParams) {
           ))}
         </dl>
         <DemoNote locale={locale} />
-        <section className="project-narrative">
+        {project.description[locale] && <section className="project-narrative">
           <p className="eyebrow">{t(locale, 'narrative')}</p>
           <p>{project.description[locale]}</p>
-        </section>
+        </section>}
       </div>
       <Gallery images={project.gallery} locale={locale} />
       {materials.length > 0 && (
@@ -62,10 +56,10 @@ export default async function ProjectDetail({ params }: DetailParams) {
           <DemoNote locale={locale} kind="materials" />
         </section>
       )}
-      <section className="next-project wrap">
+      {next && <section className="next-project wrap">
         <p className="eyebrow">{t(locale, 'nextProject')}</p>
         <TextLink href={`/${locale}/projects/${next.slug}`}>{next.title[locale]}</TextLink>
-      </section>
+      </section>}
     </>
   );
 }

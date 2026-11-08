@@ -1,11 +1,10 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { Locale } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { site, team } from '@/data/site';
 import { Picture } from './media';
-import { TextLink, DemoNote } from './ui';
+import { TextLink } from './ui';
 export function StudioPreview({ locale }: { locale: Locale }) {
   return (
     <section className="studio-preview wrap">
@@ -29,26 +28,6 @@ export function StudioPreview({ locale }: { locale: Locale }) {
           ))}
         </div>
         <TextLink href={`/${locale}/archstudio`}>{t(locale, 'meetStudio')}</TextLink>
-      </div>
-    </section>
-  );
-}
-export function ShowroomPreview({ locale }: { locale: Locale }) {
-  return (
-    <section className="showroom-preview">
-      <Picture media={images.showroom} locale={locale} sizes="100vw" />
-      <div className="showroom-overlay">
-        <p className="eyebrow">05 / Garnet {t(locale, 'showroom')}</p>
-        <h2>{t(locale, 'visit')}.</h2>
-        <p>
-          {site.address}
-          <br />
-          {t(locale, 'location')}
-        </p>
-        <TextLink href={`/${locale}/showroom`}>{t(locale, 'visitShowroom')}</TextLink>
-      </div>
-      <div className="showroom-photo-note">
-        <DemoNote locale={locale} kind="photo" />
       </div>
     </section>
   );
@@ -95,26 +74,6 @@ export function LocationMap({ locale }: { locale: Locale }) {
         </a>
       </div>
       <p className="map-caption">{t(locale, 'mapNote')}</p>
-    </div>
-  );
-}
-export function Address({ locale }: { locale: Locale }) {
-  return (
-    <div className="address-block">
-      <p className="eyebrow">Garnet / {t(locale, 'showroom')}</p>
-      <h3>{site.address}</h3>
-      <p>{t(locale, 'location')}</p>
-      <div className="address-links">
-        <a className="text-link" href={site.directions} target="_blank" rel="noreferrer">
-          {t(locale, 'directions')} ↗
-        </a>
-        <a className="text-link" href={site.instagram} target="_blank" rel="noreferrer">
-          Instagram ↗
-        </a>
-        <Link className="text-link" href={`/${locale}/contact`}>
-          {t(locale, 'contact')} ↗
-        </Link>
-      </div>
     </div>
   );
 }

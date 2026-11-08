@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { t, locales, type CopyKey } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 import { site, team } from '@/data/site';
-export function Footer({ locale }: { locale: Locale }) {
+import { getSiteSettings } from '@/lib/repository';
+export async function Footer({ locale }: { locale: Locale }) {
+  const settings = await getSiteSettings();
   return (
     <footer className="footer wrap">
       <div className="footer-top">
@@ -11,7 +13,7 @@ export function Footer({ locale }: { locale: Locale }) {
           <Image src={site.logo} width={84} height={84} alt="Garnet" />
           <p>{t(locale, 'brandLine')}</p>
           <p>
-            {site.address}
+            {settings.address}
             <br />
             {t(locale, 'location')}
           </p>
@@ -27,14 +29,14 @@ export function Footer({ locale }: { locale: Locale }) {
           ))}
         </div>
         <nav aria-label={t(locale, 'navigation')}>
-          {(['projects', 'materials', 'archstudio', 'showroom', 'about', 'contact'] as CopyKey[]).map((key) => (
+          {(['projects', 'materials', 'archstudio', 'about', 'contact'] as CopyKey[]).map((key) => (
             <Link key={key} href={`/${locale}/${key}`}>
               {t(locale, key)}
             </Link>
           ))}
         </nav>
         <div>
-          <a href={site.instagram} target="_blank" rel="noreferrer">
+          <a href={settings.instagram} target="_blank" rel="noreferrer">
             Instagram ↗
           </a>
           <div className="languages">
@@ -52,7 +54,7 @@ export function Footer({ locale }: { locale: Locale }) {
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Garnet</span>
         <span>
-          {t(locale, 'websiteBy')} <span className="credit">AD Solutions</span>
+          {t(locale, 'websiteBy')} <a className="credit" href="https://www.adsolutions.mk" target="_blank" rel="noopener noreferrer">AD Solutions</a>
         </span>
         <span>{t(locale, 'location')}</span>
       </div>

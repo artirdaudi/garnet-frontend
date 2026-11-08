@@ -6,7 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { locales, t, type CopyKey } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 import { site } from '@/data/site';
-const nav: CopyKey[] = ['projects', 'archstudio', 'materials', 'showroom', 'about', 'contact'];
+const nav: { key: CopyKey; path: string }[] = [
+  { key: 'projects', path: 'projects' },
+  { key: 'archstudio', path: 'archstudio' },
+  { key: 'tiles', path: 'materials/category/tiles' },
+  { key: 'panels', path: 'materials/category/panels' },
+  { key: 'about', path: 'about' },
+  { key: 'contact', path: 'contact' },
+];
 export function Header({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -58,15 +65,13 @@ export function Header({ locale }: { locale: Locale }) {
         {t(locale, 'skip')}
       </a>
       <header className={`header ${scrolled || !home ? 'solid' : ''}`}>
-        <Link className="brand" href={`/${locale}`} aria-label={`Garnet — ${t(locale, 'home')}`}>
-          <Image src={site.logo} alt="Garnet" width={80} height={80} priority />
-          <span>
-            GARNET<small>{t(locale, 'brandLine')}</small>
-          </span>
-        </Link>
+        <a className="brand" href={`/${locale}`} aria-label={`Garnet — ${t(locale, 'home')}`} onClick={(event) => { if (home) { event.preventDefault(); window.scrollTo({ top: 0, behavior: 'instant' }); } }}>
+          <Image className="brand-logo-mark" src={site.logo} alt="" width={1254} height={1254} priority />
+          <span className="brand-logo-lettering" aria-hidden="true"><Image src="/brand/garnet-logo-transparent.png" alt="" width={1254} height={1254} priority /></span>
+        </a>
         <nav className="desktop-nav" aria-label={t(locale, 'navigation')}>
-          {nav.map((key) => (
-            <Link key={key} href={`/${locale}/${key}`} aria-current={pathname.startsWith(`/${locale}/${key}`) ? 'page' : undefined}>
+          {nav.map(({ key, path }) => (
+            <Link key={key} href={`/${locale}/${path}`} aria-current={pathname === `/${locale}/${path}` || pathname.startsWith(`/${locale}/${path}/`) ? 'page' : undefined}>
               {t(locale, key)}
             </Link>
           ))}
@@ -85,8 +90,8 @@ export function Header({ locale }: { locale: Locale }) {
           </button>
         </div>
         <nav aria-label={t(locale, 'navigation')}>
-          {nav.map((key, index) => (
-            <Link onClick={close} key={key} href={`/${locale}/${key}`}>
+          {nav.map(({ key, path }, index) => (
+            <Link onClick={close} key={key} href={`/${locale}/${path}`}>
               <small>0{index + 1}</small>
               {t(locale, key)}
               <span aria-hidden="true">↗</span>

@@ -1,8 +1,8 @@
 export const locales = ['sq', 'mk', 'en'] as const;
 export type Locale = (typeof locales)[number];
 export type Localized = Record<Locale, string>;
-export type ProjectCategory = 'architecture' | 'interior';
-export type MaterialCategory = 'tiles' | 'panels' | 'surfaces';
+export type ProjectCategory = string;
+export type MaterialCategory = string;
 export interface Media {
   id: string;
   url: string;
@@ -16,7 +16,8 @@ export interface Project {
   slug: string;
   title: Localized;
   category: ProjectCategory;
-  use: 'residential' | 'commercial';
+  categoryTitle?: Localized;
+  use: string;
   location: Localized;
   year: number;
   status: Localized;
@@ -35,6 +36,7 @@ export interface Material {
   slug: string;
   name: string;
   category: MaterialCategory;
+  categoryTitle?: Localized;
   description: Localized;
   coverImage: Media;
   gallery: Media[];
@@ -65,4 +67,5 @@ export interface ContactSubmission {
   message: string;
   locale: Locale;
   material?: string;
+  materialId?: string;
 }

@@ -9,7 +9,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'projects',
     'materials',
     'archstudio',
-    'showroom',
     'about',
     'contact',
     ...projects.map((project) => `projects/${project.slug}`),

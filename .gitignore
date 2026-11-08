@@ -6,3 +6,6 @@ out/
 *.tsbuildinfo
 .DS_Store
 artifacts/
+scripts/.project-import-state.json
+__pycache__/
+*.pyc

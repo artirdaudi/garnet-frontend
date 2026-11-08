@@ -1,29 +1,132 @@
-import { projects } from '@/data/projects';
-import { materials } from '@/data/materials';
-import { categories } from '@/data/categories';
-// Async boundary: replace these implementations with validated FastAPI responses.
-export async function getProjects() {
-  return [...projects].sort((a, b) => a.displayOrder - b.displayOrder);
+import { cache } from 'react';
+import { apiFetch } from './api-base';
+import type { Category, Localized, Material, MaterialCategory, Media, Project, ProjectCategory } from './types';
+import { images } from '@/data/media';
+import { site } from '@/data/site';
+
+type Raw = Record<string, unknown>;
+type Page = { items: Raw[]; total: number };
+const obj = (x: unknown): Raw => x && typeof x === 'object' ? x as Raw : {};
+const str = (x: Raw, k: string) => String(x[k] ?? '');
+const loc = (x: Raw, k: string): Localized => ({ sq: str(x, k + '_sq'), mk: str(x, k + '_mk') || str(x, k + '_sq'), en: str(x, k + '_en') || str(x, k + '_sq') });
+const same = (x: string): Localized => ({ sq: x, mk: x, en: x });
+function photo(x: unknown, fallback: Media): Media {
+  const item = obj(x);
+  if (typeof item.secure_url !== 'string' || !item.secure_url.startsWith('https://res.cloudinary.com/')) return fallback;
+  return { id: String(item.id), url: item.secure_url, alt: loc(item, 'alt'), width: Number(item.width) || 1600, height: Number(item.height) || 1000 };
 }
-export async function getFeaturedProjects() {
-  return (await getProjects()).filter((project) => project.featured);
+async function read<T>(path: string): Promise<T> {
+  const response = await apiFetch(path);
+  if (!response.ok) throw new Error(`Garnet API ${response.status}: ${path}`);
+  return response.json() as Promise<T>;
 }
+async function all(resource: string): Promise<Raw[]> {
+  const first = await read<Page>(`/api/v1/${resource}?page=1&page_size=100`);
+  const rows = [...first.items];
+  for (let page = 2; rows.length < first.total; page++) {
+    const next = await read<Page>(`/api/v1/${resource}?page=${page}&page_size=100`);
+    if (!next.items.length) break;
+    rows.push(...next.items);
+  }
+  return rows;
+}
+const projectKind = (s: string): ProjectCategory => s;
+const typologyKind = (s: string): Project['use'] => {
+  const value = s.toLowerCase();
+  if (['banimi', 'residential'].includes(value)) return 'residential';
+  if (['komercial', 'commercial'].includes(value)) return 'commercial';
+  return s;
+};
+const materialKind = (s: string): MaterialCategory => s || 'surfaces';
+
+function asProject(raw: Raw, detail = false): Project {
+  const cover = photo(raw.cover_media, images.architecture);
+  const gallery = detail && Array.isArray(raw.images) ? raw.images.map(obj) : [];
+  return {
+    id: String(raw.id), slug: String(raw.id), title: same(str(raw, 'title')),
+    category: projectKind(''), categoryTitle: undefined, use: typologyKind(''),
+    location: same(str(raw, 'location')), year: 0,
+    status: same(''), area: raw.area_m2 ? `${raw.area_m2} m²` : '',
+    services: [],
+    description: same(str(raw, 'description')), coverImage: cover,
+    gallery: gallery.map((x) => photo(x, cover)),
+    materialIds: [],
+    featured: true, displayOrder: Number(raw.id) || 0, isDemo: false,
+  };
+}
+function asMaterial(raw: Raw, detail = false): Material {
+  const isPanel = raw.category === 'PANELE';
+  const cover = photo(raw.cover_media, isPanel ? images.wood : images.bathroom);
+  const gallery = detail && Array.isArray(raw.images) ? raw.images.map(obj) : [];
+  return {
+    id: String(raw.id), slug: String(raw.id), name: str(raw, 'name'),
+    category: materialKind(isPanel ? 'panels' : 'tiles'), categoryTitle: isPanel
+      ? { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }
+      : { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' },
+    description: same(str(raw, 'description')), coverImage: cover, gallery: gallery.map((x) => photo(x, cover)),
+    attributes: { finish: same(''), size: str(raw, 'dimensions'), application: same(''), color: same(str(raw, 'color')) },
+    featured: false, isNew: false, active: true, isDemo: false,
+  };
+}
+export const getProjects = cache(async () => {
+  const rows = await all('projects');
+  return rows.map((x) => asProject(x));
+});
+export async function getFeaturedProjects() { return (await getProjects()).filter((x) => x.featured); }
 export async function getProjectBySlug(slug: string) {
-  return projects.find((project) => project.slug === slug);
+  const response = await apiFetch(`/api/v1/projects/${encodeURIComponent(slug)}`);
+  if (response.status === 404) return undefined;
+  if (!response.ok) throw new Error('Project API unavailable');
+  return asProject(await response.json(), true);
 }
-export async function getMaterials() {
-  return materials.filter((material) => material.active);
-}
+export const getMaterials = cache(async () => (await all('materials')).map((x) => asMaterial(x)));
 export async function getMaterialBySlug(slug: string) {
-  return (await getMaterials()).find((material) => material.slug === slug);
+  const response = await apiFetch(`/api/v1/materials/${encodeURIComponent(slug)}`);
+  if (response.status === 404) return undefined;
+  if (!response.ok) throw new Error('Material API unavailable');
+  return asMaterial(await response.json(), true);
 }
-export async function getCategories() {
-  return categories;
+export const getCategories = cache(async (): Promise<Category[]> => [
+  { slug: 'tiles', title: { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' }, description: same(''), image: images.bathroom },
+  { slug: 'panels', title: { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }, description: same(''), image: images.wood },
+]);
+export async function getMaterialsForProject(id: string): Promise<Material[]> {
+  void id;
+  return [];
 }
-export async function getMaterialsForProject(id: string) {
-  const project = projects.find((item) => item.id === id);
-  return (await getMaterials()).filter((item) => project?.materialIds.includes(item.id));
+export async function getProjectsForMaterial(id: string): Promise<Project[]> {
+  void id;
+  return [];
 }
-export async function getProjectsForMaterial(id: string) {
-  return (await getProjects()).filter((project) => project.materialIds.includes(id));
+export const getSiteSettings = cache(async () => {
+  const row = await read<Raw>('/api/v1/settings');
+  const address = str(row, 'address') || site.address;
+  const city = str(row, 'city') || 'Tetovë';
+  const instagram = str(row, 'instagram_url') || site.instagram;
+  const latitude = Number(row.latitude);
+  const longitude = Number(row.longitude);
+  return {
+    address, city, instagram, instagramHandle: instagram === site.instagram ? site.instagramHandle : '@' + instagram.split('/').filter(Boolean).at(-1),
+    directions: Number.isFinite(latitude) && Number.isFinite(longitude) && row.latitude != null && row.longitude != null
+      ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ' ' + city)}`,
+    email: str(row, 'email'), phone: str(row, 'phone'),
+  };
+});
+export async function getPageContent(key: string) {
+  const response = await apiFetch(`/api/v1/pages/${encodeURIComponent(key)}`);
+  if (response.status === 404) return undefined;
+  if (!response.ok) throw new Error('Page content API unavailable');
+  const row = await response.json() as Raw;
+  return {
+    title: loc(row, 'title'), content: loc(row, 'content'),
+    sections: (Array.isArray(row.sections) ? row.sections : []).map((entry) => {
+      const section = obj(entry);
+      return { key: str(section, 'section_key'), title: loc(section, 'title'), description: loc(section, 'description'), media: section.media };
+    }),
+  };
 }
+export const getServices = cache(async () => (await read<Raw[]>('/api/v1/services')).map((row) => ({
+  id: String(row.id), slug: str(row, 'slug'), name: loc(row, 'name'), description: loc(row, 'description'),
+})));
+export const toMedia = photo;
