@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { locales, t, type CopyKey } from '@/lib/i18n';
+import { locales, localizedPath, t, type CopyKey } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 import { site } from '@/data/site';
 const nav: { key: CopyKey; path: string }[] = [
@@ -19,7 +19,7 @@ export function Header({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
-  const home = pathname === `/${locale}`;
+  const home = pathname === localizedPath(locale);
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 32);
     update();
@@ -47,7 +47,7 @@ export function Header({ locale }: { locale: Locale }) {
       {locales.map((lang) => (
         <Link
           key={lang}
-          href={pathname.replace(/^\/(sq|mk|en)(?=\/|$)/, `/${lang}`)}
+          href={localizedPath(lang, pathname.replace(/^\/(sq|mk|en)(?=\/|$)/, '').replace(/^\//, ''))}
           hrefLang={lang}
           lang={lang}
           aria-current={lang === locale ? 'page' : undefined}
@@ -64,13 +64,13 @@ export function Header({ locale }: { locale: Locale }) {
         {t(locale, 'skip')}
       </a>
       <header className={`header ${scrolled || !home ? 'solid' : ''}`}>
-        <a className="brand" href={`/${locale}`} aria-label={`Garnet — ${t(locale, 'home')}`} onClick={(event) => { if (home) { event.preventDefault(); window.scrollTo({ top: 0, behavior: 'instant' }); } }}>
+        <a className="brand" href={localizedPath(locale)} aria-label={`Garnet — ${t(locale, 'home')}`} onClick={(event) => { if (home) { event.preventDefault(); window.scrollTo({ top: 0, behavior: 'instant' }); } }}>
           <Image className="brand-logo-mark" src={site.logo} alt="" width={1254} height={1254} priority />
           <span className="brand-logo-lettering" aria-hidden="true"><Image src="/brand/garnet-logo-transparent.png" alt="" width={1254} height={1254} priority /></span>
         </a>
         <nav className="desktop-nav" aria-label={t(locale, 'navigation')}>
           {nav.map(({ key, path }) => (
-            <Link key={key} href={`/${locale}/${path}`} aria-current={pathname === `/${locale}/${path}` || pathname.startsWith(`/${locale}/${path}/`) ? 'page' : undefined}>
+            <Link key={key} href={localizedPath(locale, path)} aria-current={pathname === localizedPath(locale, path) || pathname.startsWith(`${localizedPath(locale, path)}/`) ? 'page' : undefined}>
               {t(locale, key)}
             </Link>
           ))}
@@ -90,10 +90,9 @@ export function Header({ locale }: { locale: Locale }) {
         </div>
         <nav aria-label={t(locale, 'navigation')}>
           {nav.map(({ key, path }, index) => (
-            <Link onClick={close} key={key} href={`/${locale}/${path}`}>
+            <Link onClick={close} key={key} href={localizedPath(locale, path)}>
               <small>0{index + 1}</small>
               {t(locale, key)}
-              <span aria-hidden="true">↗</span>
             </Link>
           ))}
         </nav>

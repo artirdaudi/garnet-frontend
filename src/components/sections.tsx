@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Locale } from '@/lib/types';
-import { t } from '@/lib/i18n';
+import { localizedPath, t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { site, team } from '@/data/site';
 import { Picture } from './media';
@@ -25,7 +25,7 @@ export function StudioPreview({ locale }: { locale: Locale }) {
             </p>
           ))}
         </div>
-        <Link className="text-link studio-link" href={`/${locale}/archstudio`}>{t(locale, 'meetStudio')}</Link>
+        <Link className="text-link studio-link" href={localizedPath(locale, 'archstudio')}>{t(locale, 'meetStudio')}</Link>
       </div>
     </StudioMotion>
   );
@@ -45,7 +45,7 @@ export function Team({ locale }: { locale: Locale }) {
               <h3>{person.name}</h3>
               <p>{t(locale, 'architect')}</p>
               <a className="text-link" href={`tel:${person.telephone}`}>
-                {person.phone} ↗
+                {person.phone}
               </a>
             </div>
           </article>
@@ -68,7 +68,7 @@ export function LocationMap({ locale }: { locale: Locale }) {
         <strong>GARNET</strong>
         <p>{site.address}</p>
         <a href={site.directions} target="_blank" rel="noreferrer">
-          {t(locale, 'directions')} ↗
+          {t(locale, 'directions')}
         </a>
       </div>
       <p className="map-caption">{t(locale, 'mapNote')}</p>

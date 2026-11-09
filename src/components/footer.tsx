@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { t, locales, type CopyKey } from '@/lib/i18n';
+import { t, locales, localizedPath, type CopyKey } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 import { site, team } from '@/data/site';
 import { getSiteSettings } from '@/lib/repository';
@@ -49,7 +49,7 @@ export async function Footer({ locale }: { locale: Locale }) {
         </div>
         <nav aria-label={t(locale, 'navigation')}>
           {navigation.map(({ key, path }) => (
-            <Link key={key} href={`/${locale}/${path}`}>
+            <Link key={key} href={localizedPath(locale, path)}>
               {t(locale, key)}
             </Link>
           ))}
@@ -71,7 +71,7 @@ export async function Footer({ locale }: { locale: Locale }) {
           </a>
           <div className="languages">
             {locales.map((lang) => (
-              <Link href={`/${lang}`} key={lang} hrefLang={lang} aria-current={lang === locale ? 'page' : undefined}>
+              <Link href={localizedPath(lang)} key={lang} hrefLang={lang} aria-current={lang === locale ? 'page' : undefined}>
                 {lang.toUpperCase()}
               </Link>
             ))}

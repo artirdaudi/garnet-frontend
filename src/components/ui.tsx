@@ -1,19 +1,11 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/types';
-import { t } from '@/lib/i18n';
-export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
-  return (
-    <span aria-hidden="true" className="arrow">
-      {diagonal ? '↗' : '↗'}
-    </span>
-  );
-}
+import { localizedPath, t } from '@/lib/i18n';
 export function TextLink({ href, children, className = '' }: { href: string; children: ReactNode; className?: string }) {
   return (
     <Link className={`text-link ${className}`} href={href}>
       {children}
-      <Arrow />
     </Link>
   );
 }
@@ -73,7 +65,7 @@ export function ContactCTA({ locale }: { locale: Locale }) {
     <section className="contact-cta wrap">
       <div>
         <h2>{t(locale, 'ctaTitle')}</h2>
-        <Link href={`/${locale}/contact`} className="contact-action">{t(locale, 'contact')}</Link>
+        <Link href={localizedPath(locale, 'contact')} className="contact-action">{t(locale, 'contact')}</Link>
       </div>
       <p>{t(locale, 'ctaText')}</p>
     </section>

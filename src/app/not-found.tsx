@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import Link from 'next/link';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, localizedPath, t } from '@/lib/i18n';
 export default async function NotFound() {
   const value = (await headers()).get('x-garnet-locale') || 'sq';
   const locale = isLocale(value) ? value : 'sq';
@@ -12,8 +12,8 @@ export default async function NotFound() {
       </span>
       <h1>{t(locale, 'notFound')}</h1>
       <p>{t(locale, 'notFoundBody')}</p>
-      <Link className="text-link" href={`/${locale}`}>
-        {t(locale, 'back')} ↗
+      <Link className="text-link" href={localizedPath(locale)}>
+        {t(locale, 'back')}
       </Link>
     </main>
   );

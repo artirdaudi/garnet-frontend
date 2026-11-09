@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { locales } from '@/lib/i18n';
+import { locales, localizedPath } from '@/lib/i18n';
 import { siteUrl } from '@/lib/seo';
 import { getProjects, getMaterials, getCategories } from '@/lib/repository';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -17,8 +17,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   return paths.flatMap((path) =>
     locales.map((locale) => ({
-      url: `${siteUrl}/${locale}${path ? `/${path}` : ''}`,
-      alternates: { languages: Object.fromEntries(locales.map((lang) => [lang, `${siteUrl}/${lang}${path ? `/${path}` : ''}`])) },
+      url: `${siteUrl}${localizedPath(locale, path)}`,
+      alternates: { languages: Object.fromEntries([...locales.map((lang) => [lang, `${siteUrl}${localizedPath(lang, path)}`]), ['x-default', `${siteUrl}${localizedPath('sq', path)}`]]) },
     })),
   );
 }

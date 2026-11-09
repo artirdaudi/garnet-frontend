@@ -1,15 +1,14 @@
 import Link from 'next/link';
 import type { Locale, Material, Project } from '@/lib/types';
-import { t, type CopyKey } from '@/lib/i18n';
+import { localizedPath, t, type CopyKey } from '@/lib/i18n';
 import { Picture } from './media';
-import { Arrow } from './ui';
 export function ProjectCard({ project, locale, index = 0 }: { project: Project; locale: Locale; index?: number }) {
   return (
-    <Link href={`/${locale}/projects/${project.slug}`} className="project-card">
+    <Link href={localizedPath(locale, `projects/${project.slug}`)} className="project-card">
       <div className="card-image">
         <Picture media={project.coverImage} locale={locale} />
         <span className="image-action">
-          {t(locale, 'viewProject')} <Arrow />
+          {t(locale, 'viewProject')}
         </span>
         <span className="image-number">{String(index + 1).padStart(2, '0')}</span>
       </div>
@@ -18,7 +17,7 @@ export function ProjectCard({ project, locale, index = 0 }: { project: Project; 
           <h3>{project.title[locale]}</h3>
           {project.location[locale] && <p>{project.location[locale]}</p>}
         </div>
-        <span className="card-year">{project.year > 0 ? project.year : ''}<Arrow /></span>
+        {project.year > 0 && <span className="card-year">{project.year}</span>}
       </div>
     </Link>
   );
@@ -34,13 +33,10 @@ export function ProjectGrid({ projects, locale, editorial = false }: { projects:
 }
 export function MaterialCard({ material, locale }: { material: Material; locale: Locale }) {
   return (
-    <Link href={`/${locale}/materials/${material.slug}`} className={`material-card material-${material.id}`}>
+    <Link href={localizedPath(locale, `materials/${material.slug}`)} className={`material-card material-${material.id}`}>
       <div className="card-image">
         <Picture media={material.coverImage} locale={locale} sizes="(max-width: 700px) 90vw, 33vw" />
         {material.isNew && <span className="new-label">{t(locale, 'new')}</span>}
-        <span className="image-action">
-          <Arrow />
-        </span>
       </div>
       <div className="card-caption">
         <div>
@@ -49,7 +45,6 @@ export function MaterialCard({ material, locale }: { material: Material; locale:
             {material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)} <span>/</span> {material.attributes.size}
           </p>
         </div>
-        <Arrow />
       </div>
     </Link>
   );

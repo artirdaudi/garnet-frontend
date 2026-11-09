@@ -1,6 +1,6 @@
 import { routeLocale, type PageParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
-import { t } from '@/lib/i18n';
+import { localizedPath, t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { Picture } from '@/components/media';
 import { PageHeading, ContactCTA, TextLink, DemoNote } from '@/components/ui';
@@ -24,7 +24,7 @@ export default async function AboutPage({ params }: PageParams) {
           <h2>{t(locale, 'introTitle')}</h2>
           <p>{t(locale, 'intro')}</p>
           <p>{content?.content[locale] || t(locale, 'aboutBody')}</p>
-          <TextLink href={`/${locale}/contact`}>{t(locale, 'contact')}</TextLink>
+          <TextLink href={localizedPath(locale, 'contact')}>{t(locale, 'contact')}</TextLink>
         </div>
       </section>
       <div className="wrap">

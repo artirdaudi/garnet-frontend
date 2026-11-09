@@ -26,7 +26,7 @@ export default async function ContactPage({ params, searchParams }: PageParams &
             <h2>{settings.address}</h2>
             <p>{t(locale, 'location')}</p>
             <a className="text-link" href={settings.directions} target="_blank" rel="noreferrer">
-              {t(locale, 'directions')} ↗
+              {t(locale, 'directions')}
             </a>
           </div>
           <div>
@@ -34,14 +34,14 @@ export default async function ContactPage({ params, searchParams }: PageParams &
             {team.map((person) => (
               <div className="contact-person" key={person.id}>
                 <h3>{person.name}</h3>
-                <a href={`tel:${person.telephone}`}>{person.phone} ↗</a>
+                <a href={`tel:${person.telephone}`}>{person.phone}</a>
               </div>
             ))}
           </div>
           <div>
             <p className="eyebrow">Instagram</p>
             <a href={settings.instagram} target="_blank" rel="noreferrer">
-              {settings.instagramHandle} ↗
+              {settings.instagramHandle}
             </a>
           </div>
         </div>

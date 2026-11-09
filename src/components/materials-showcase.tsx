@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import type { Locale } from '@/lib/types';
+import { localizedPath } from '@/lib/i18n';
 
 const content = {
   sq: {
@@ -92,7 +93,7 @@ export function MaterialsShowcase({ locale }: { locale: Locale }) {
       </div>
     </div>
     <div className="materials-showcase-grid">
-      {cards.map((card) => <Link key={card.key} href={`/${locale}/materials/category/${card.key}`} className={`materials-showcase-card materials-showcase-card-${card.key}`} data-material-reveal>
+      {cards.map((card) => <Link key={card.key} href={localizedPath(locale, `materials/category/${card.key}`)} className={`materials-showcase-card materials-showcase-card-${card.key}`} data-material-reveal>
         <div className="materials-showcase-image">
           <Image src={card.image} alt={card.alt} fill sizes="(max-width: 760px) 100vw, 55vw" />
         </div>
@@ -107,7 +108,7 @@ export function MaterialsShowcase({ locale }: { locale: Locale }) {
     </div>
     <div className="materials-showcase-footer" data-material-reveal>
       <span>{copy.closing}</span>
-      <Link href={`/${locale}/contact`}>{copy.contact}</Link>
+      <Link href={localizedPath(locale, 'contact')}>{copy.contact}</Link>
     </div>
   </section>;
 }

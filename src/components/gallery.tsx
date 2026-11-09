@@ -31,9 +31,6 @@ export function Gallery({ images, locale }: { images: Media[]; locale: Locale })
               aria-label={`${media.alt[locale]} — ${index + 1}/${images.length}`}
             >
               <Picture media={media} locale={locale} sizes="(max-width: 700px) 100vw, 85vw" />
-              <span className="gallery-expand" aria-hidden="true">
-                ↗
-              </span>
             </button>
             <figcaption>
               <span>

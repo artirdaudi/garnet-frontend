@@ -66,7 +66,7 @@ export function ContactForm({ locale, material, materialId }: { locale: Locale; 
         </label>
         <p className="form-note">{t(locale, 'formNote')}</p>
         <button className="submit-button" type="submit" disabled={pending}>
-          {pending ? '…' : t(locale, 'submit')} <span aria-hidden="true">↗</span>
+          {pending ? '…' : t(locale, 'submit')}
         </button>
       </div>
       <div className="form-feedback" role="status" aria-live="polite">
@@ -78,7 +78,7 @@ export function ContactForm({ locale, material, materialId }: { locale: Locale; 
             </span>
             <p>{t(locale, 'formSuccess')}</p>
             <button className="text-link" type="button" onClick={() => setPreview(false)}>
-              {t(locale, 'edit')} ↗
+              {t(locale, 'edit')}
             </button>
           </>
         )}

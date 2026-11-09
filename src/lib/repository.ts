@@ -10,10 +10,11 @@ const obj = (x: unknown): Raw => x && typeof x === 'object' ? x as Raw : {};
 const str = (x: Raw, k: string) => String(x[k] ?? '');
 const loc = (x: Raw, k: string): Localized => ({ sq: str(x, k + '_sq'), mk: str(x, k + '_mk') || str(x, k + '_sq'), en: str(x, k + '_en') || str(x, k + '_sq') });
 const same = (x: string): Localized => ({ sq: x, mk: x, en: x });
-function photo(x: unknown, fallback: Media): Media {
+function photo(x: unknown, fallback: Media, title = ''): Media {
   const item = obj(x);
   if (typeof item.secure_url !== 'string' || !item.secure_url.startsWith('https://res.cloudinary.com/')) return fallback;
-  return { id: String(item.id), url: item.secure_url, alt: loc(item, 'alt'), width: Number(item.width) || 1600, height: Number(item.height) || 1000 };
+  const alt = loc(item, 'alt');
+  return { id: String(item.id), url: item.secure_url, alt: { sq: alt.sq || title, mk: alt.mk || title, en: alt.en || title }, width: Number(item.width) || 1600, height: Number(item.height) || 1000 };
 }
 async function read<T>(path: string): Promise<T> {
   const response = await apiFetch(path);
@@ -40,7 +41,8 @@ const typologyKind = (s: string): Project['use'] => {
 const materialKind = (s: string): MaterialCategory => s || 'surfaces';
 
 function asProject(raw: Raw, detail = false): Project {
-  const cover = photo(raw.cover_media, images.architecture);
+  const title = str(raw, 'title');
+  const cover = photo(raw.cover_media, images.architecture, title);
   const gallery = detail && Array.isArray(raw.images) ? raw.images.map(obj) : [];
   return {
     id: String(raw.id), slug: String(raw.id), title: same(str(raw, 'title')),
@@ -49,21 +51,22 @@ function asProject(raw: Raw, detail = false): Project {
     status: same(''), area: raw.area_m2 ? `${raw.area_m2} m²` : '',
     services: [],
     description: same(str(raw, 'description')), coverImage: cover,
-    gallery: gallery.map((x) => photo(x, cover)),
+    gallery: gallery.map((x) => photo(x, cover, title)),
     materialIds: [],
     featured: true, displayOrder: Number(raw.id) || 0, isDemo: false,
   };
 }
 function asMaterial(raw: Raw, detail = false): Material {
   const isPanel = raw.category === 'PANELE';
-  const cover = photo(raw.cover_media, isPanel ? images.wood : images.bathroom);
+  const name = str(raw, 'name');
+  const cover = photo(raw.cover_media, isPanel ? images.wood : images.bathroom, name);
   const gallery = detail && Array.isArray(raw.images) ? raw.images.map(obj) : [];
   return {
     id: String(raw.id), slug: String(raw.id), name: str(raw, 'name'),
     category: materialKind(isPanel ? 'panels' : 'tiles'), categoryTitle: isPanel
       ? { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }
       : { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' },
-    description: same(str(raw, 'description')), coverImage: cover, gallery: gallery.map((x) => photo(x, cover)),
+    description: same(str(raw, 'description')), coverImage: cover, gallery: gallery.map((x) => photo(x, cover, name)),
     attributes: { finish: same(''), size: str(raw, 'dimensions'), application: same(''), color: same(str(raw, 'color')) },
     featured: false, isNew: false, active: true, isDemo: false,
   };
@@ -102,8 +105,8 @@ export async function getMaterialBySlug(slug: string) {
   return asMaterial(await response.json(), true);
 }
 export const getCategories = cache(async (): Promise<Category[]> => [
-  { slug: 'tiles', title: { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' }, description: same(''), image: images.bathroom },
-  { slug: 'panels', title: { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }, description: same(''), image: images.wood },
+  { slug: 'tiles', title: { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' }, description: { sq: 'Shikoni përzgjedhjen e pllakave Garnet për shtëpi dhe biznese në Tetovë.', mk: 'Погледнете го изборот на плочки Garnet за домови и деловни простори во Тетово.', en: 'Explore Garnet tiles for homes and businesses in Tetovo.' }, image: images.bathroom },
+  { slug: 'panels', title: { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }, description: { sq: 'Shikoni panelet dekoruese Garnet për mure dhe interierë në Tetovë.', mk: 'Погледнете ги декоративните панели Garnet за ѕидови и ентериери во Тетово.', en: 'Explore Garnet decorative panels for walls and interiors in Tetovo.' }, image: images.wood },
 ]);
 export async function getMaterialsForProject(id: string): Promise<Material[]> {
   void id;

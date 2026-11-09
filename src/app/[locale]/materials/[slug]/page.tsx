@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { routeLocale, type DetailParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
-import { t, type CopyKey } from '@/lib/i18n';
+import { localizedPath, t, type CopyKey } from '@/lib/i18n';
 import { getMaterialBySlug, getProjectsForMaterial } from '@/lib/repository';
 import { Picture } from '@/components/media';
 import { Gallery } from '@/components/gallery';
@@ -32,7 +32,7 @@ export default async function MaterialDetail({ params }: DetailParams) {
       <section className="material-detail wrap">
         <Picture media={material.coverImage} locale={locale} priority />
         <div className="material-detail-copy">
-          <TextLink href={`/${locale}/materials`}>{t(locale, 'materials')}</TextLink>
+          <TextLink href={localizedPath(locale, 'materials')}>{t(locale, 'materials')}</TextLink>
           <p className="eyebrow">{material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)}</p>
           <h1>{material.name}</h1>
           <p>{material.description[locale]}</p>
@@ -44,7 +44,7 @@ export default async function MaterialDetail({ params }: DetailParams) {
               </div>
             ))}
           </dl>
-          <TextLink href={`/${locale}/contact?material=${encodeURIComponent(material.slug)}`}>{t(locale, 'askMaterial')}</TextLink>
+          <TextLink href={`${localizedPath(locale, 'contact')}?material=${encodeURIComponent(material.slug)}`}>{t(locale, 'askMaterial')}</TextLink>
           <DemoNote locale={locale} kind="materials" />
         </div>
       </section>

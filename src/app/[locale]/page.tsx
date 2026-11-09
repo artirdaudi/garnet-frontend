@@ -1,18 +1,19 @@
 import Link from 'next/link';
 import { VisionArt } from '@/components/vision-art';
 import { routeLocale, type PageParams } from '@/lib/route';
-import { metadata } from '@/lib/seo';
-import { t } from '@/lib/i18n';
+import { metadata, siteUrl } from '@/lib/seo';
+import { localizedPath, t } from '@/lib/i18n';
 import { getFeaturedProjects, getMaterials, getPageContent, getProjectBySlug, getHeroImages } from '@/lib/repository';
 import { images } from '@/data/media';
 import { Picture } from '@/components/media';
 import { HeroBackground } from '@/components/hero-background';
-import { Arrow, ContactCTA, DemoNote, SectionHeading, TextLink } from '@/components/ui';
+import { ContactCTA, DemoNote, SectionHeading, TextLink } from '@/components/ui';
 import { MaterialGrid } from '@/components/cards';
 import { ProjectShowcase } from '@/components/project-showcase';
 import { BrandStatement } from '@/components/brand-statement';
 import { MaterialsShowcase } from '@/components/materials-showcase';
 import { StudioPreview } from '@/components/sections';
+import { site } from '@/data/site';
 export async function generateMetadata({ params }: PageParams) {
   const locale = await routeLocale(params);
   return metadata(locale, t(locale, 'brandLine'));
@@ -30,6 +31,13 @@ export default async function Home({ params }: PageParams) {
   const statementLines = t(locale, 'materialsStatement').split('\n');
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'Garnet', url: siteUrl, inLanguage: ['sq', 'mk', 'en'] },
+          { '@type': 'HomeAndConstructionBusiness', '@id': `${siteUrl}/#business`, name: 'Garnet', url: siteUrl, image: `${siteUrl}${site.logo}`, logo: `${siteUrl}${site.logo}`, address: { '@type': 'PostalAddress', streetAddress: site.address, addressLocality: 'Tetovë', addressCountry: 'MK' }, sameAs: [site.instagram, site.facebook] },
+        ],
+      }).replace(/</g, '\\u003c') }} />
       <section className="hero">
         <HeroBackground images={heroImages.length ? heroImages : [images.hero]} locale={locale} />
         <div className="hero-shade" />
@@ -47,11 +55,11 @@ export default async function Home({ params }: PageParams) {
           <div className="hero-bottom">
             <p>{hero?.description[locale] || t(locale, 'heroSub')}</p>
             <div className="hero-actions">
-              <Link className="hero-button hero-button-primary" href={`/${locale}/projects`}>
-                {t(locale, 'viewProjects')} <Arrow />
+              <Link className="hero-button hero-button-primary" href={localizedPath(locale, 'projects')}>
+                {t(locale, 'viewProjects')}
               </Link>
-              <Link className="hero-button hero-button-secondary" href={`/${locale}/contact`}>
-                {t(locale, 'startProject')} <Arrow />
+              <Link className="hero-button hero-button-secondary" href={localizedPath(locale, 'contact')}>
+                {t(locale, 'startProject')}
               </Link>
             </div>
           </div>
@@ -71,14 +79,14 @@ export default async function Home({ params }: PageParams) {
           <p className="eyebrow">{t(locale, 'philosophy')}</p>
           <h2>{introduction?.title[locale] || t(locale, 'introTitle')}</h2>
           <p className="vision-description">{introduction?.description[locale] || t(locale, 'intro')}</p>
-          <TextLink href={`/${locale}/about`}>{locale === 'sq' ? 'Rreth Nesh' : t(locale, 'about')}</TextLink>
+          <TextLink href={localizedPath(locale, 'about')}>{locale === 'sq' ? 'Rreth Nesh' : t(locale, 'about')}</TextLink>
         </div>
 
         <VisionArt alt={t(locale, 'disciplines')} />
       </section>
       <section className="selected-projects wrap">
         <SectionHeading eyebrow={t(locale, 'projects')} title={t(locale, 'selected')}>
-          <Link className="showcase-all-link" href={`/${locale}/projects`}>{t(locale, 'allProjects')}</Link>
+          <Link className="showcase-all-link" href={localizedPath(locale, 'projects')}>{t(locale, 'allProjects')}</Link>
         </SectionHeading>
         <ProjectShowcase projects={showcaseProjects} locale={locale} />
         <DemoNote locale={locale} />
@@ -96,13 +104,13 @@ export default async function Home({ params }: PageParams) {
           {(apollo.attributes.color[locale] || apollo.attributes.finish[locale]) && <p>
             {[apollo.attributes.color[locale], apollo.attributes.finish[locale]].filter(Boolean).join(' / ')}
           </p>}
-          <TextLink href={`/${locale}/materials/${apollo.slug}`}>{t(locale, 'viewMaterial')}</TextLink>
+          <TextLink href={localizedPath(locale, `materials/${apollo.slug}`)}>{t(locale, 'viewMaterial')}</TextLink>
         </div>
       </section>}
       <StudioPreview locale={locale} />
       {materials.length > 0 && <section className="new-materials wrap">
         <SectionHeading number="05" eyebrow={t(locale, 'materials')} title={t(locale, 'newMaterials')}>
-          <TextLink href={`/${locale}/materials`}>{t(locale, 'catalogue')}</TextLink>
+          <TextLink href={localizedPath(locale, 'materials')}>{t(locale, 'catalogue')}</TextLink>
         </SectionHeading>
         <MaterialGrid materials={materials.slice(0, 3)} locale={locale} />
         <DemoNote locale={locale} kind="materials" />

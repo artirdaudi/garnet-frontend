@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { routeLocale, type DetailParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
-import { t, type CopyKey } from '@/lib/i18n';
+import { localizedPath, t, type CopyKey } from '@/lib/i18n';
 import { getProjectBySlug, getProjects, getMaterialsForProject } from '@/lib/repository';
 import { Picture } from '@/components/media';
 import { Gallery } from '@/components/gallery';
@@ -28,7 +28,7 @@ export default async function ProjectDetail({ params }: DetailParams) {
   return (
     <>
       <div className="detail-heading wrap">
-        <TextLink href={`/${locale}/projects`}>{t(locale, 'projects')}</TextLink>
+        <TextLink href={localizedPath(locale, 'projects')}>{t(locale, 'projects')}</TextLink>
         <h1>{project.title[locale]}</h1>
         {project.location[locale] && <p>{project.location[locale]}</p>}
       </div>
@@ -58,7 +58,7 @@ export default async function ProjectDetail({ params }: DetailParams) {
       )}
       {next && <section className="next-project wrap">
         <p className="eyebrow">{t(locale, 'nextProject')}</p>
-        <TextLink href={`/${locale}/projects/${next.slug}`}>{next.title[locale]}</TextLink>
+        <TextLink href={localizedPath(locale, `projects/${next.slug}`)}>{next.title[locale]}</TextLink>
       </section>}
     </>
   );

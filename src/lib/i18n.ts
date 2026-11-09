@@ -178,4 +178,7 @@ export const copy = {
 } satisfies Record<string, Localized>;
 export type CopyKey = keyof typeof copy;
 export const t = (locale: Locale, key: CopyKey): string => copy[key][locale];
-export const localizedPath = (locale: Locale, path = '') => `/${locale}${path ? `/${path.replace(/^\//, '')}` : ''}`;
+export const localizedPath = (locale: Locale, path = '') => {
+  const suffix = path ? `/${path.replace(/^\//, '')}` : '';
+  return locale === 'sq' ? suffix || '/' : `/${locale}${suffix}`;
+};

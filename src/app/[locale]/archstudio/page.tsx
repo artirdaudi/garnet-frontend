@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { routeLocale, type PageParams } from '@/lib/route';
 import { metadata } from '@/lib/seo';
-import { t } from '@/lib/i18n';
+import { localizedPath, t } from '@/lib/i18n';
 import { images } from '@/data/media';
 import { site } from '@/data/site';
 import { getFeaturedProjects, getServices } from '@/lib/repository';
@@ -37,7 +37,7 @@ export default async function StudioPage({ params }: PageParams) {
       <Team locale={locale} />
       <section className="related-section wrap">
         <SectionHeading title={t(locale, 'selected')}>
-          <TextLink href={`/${locale}/projects`}>{t(locale, 'allProjects')}</TextLink>
+          <TextLink href={localizedPath(locale, 'projects')}>{t(locale, 'allProjects')}</TextLink>
         </SectionHeading>
         <ProjectGrid projects={projects.slice(0, 2)} locale={locale} />
         <DemoNote locale={locale} />

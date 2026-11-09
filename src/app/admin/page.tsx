@@ -378,7 +378,7 @@ export default function AdminPage() {
         <label>Përdoruesi<input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" required /></label>
         <label>Fjalëkalimi<span className="admin-password-field"><input type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /><button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showPassword}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>{showPassword && <path d="M3 3l18 18"/>}</svg></button></span></label>
         {error && <p className="admin-error" role="alert">{error}</p>}
-        <button type="submit" disabled={busy}>{busy ? 'Duke u kyçur…' : 'Kyçu në panel'} <span>↗</span></button>
+        <button type="submit" disabled={busy}>{busy ? 'Duke u kyçur…' : 'Kyçu në panel'}</button>
       </form>
     </main>
   );
@@ -391,9 +391,9 @@ export default function AdminPage() {
           <button disabled={busy} className={section === 'dashboard' ? 'active' : ''} onClick={() => navigate('dashboard')}>◫ <span>Përmbledhja</span></button>
           <div className="admin-nav-divider" aria-hidden="true" />
           <button disabled={busy} className={section === 'hero' ? 'active' : ''} onClick={() => navigate('hero')}>▧ <span>Fotografitë e hero-s</span></button>
-          {resources.filter((item) => item.key === 'projects' || item.key === 'materials').map((item) => <button disabled={busy} key={item.key} className={section === item.key ? 'active' : ''} onClick={() => navigate(item.key)}>↗ <span>{item.label}</span></button>)}
+          {resources.filter((item) => item.key === 'projects' || item.key === 'materials').map((item) => <button disabled={busy} key={item.key} className={section === item.key ? 'active' : ''} onClick={() => navigate(item.key)}><span>{item.label}</span></button>)}
         </nav>
-        <div className="admin-side-bottom"><a href="/sq" target="_blank" rel="noreferrer">Shiko faqen ↗</a><button disabled={busy} onClick={logout}>Dil nga paneli ↗</button></div>
+        <div className="admin-side-bottom"><a href="/" target="_blank" rel="noreferrer">Shiko faqen</a><button disabled={busy} onClick={logout}>Dil nga paneli</button></div>
       </aside>
       <main className="admin-main">
         <header className="admin-topbar"><span>GARNET / {section === 'dashboard' ? 'PËRMBLEDHJA' : section === 'hero' ? 'FOTOGRAFITË E HERO-S' : config?.label.toUpperCase()}</span></header>
@@ -401,7 +401,7 @@ export default function AdminPage() {
         {notice && <div className="admin-alert success" role="status">{notice}</div>}
         {section === 'dashboard' ? (
           <>
-            <div className="admin-heading"><div><p className="admin-eyebrow">PËRMBLEDHJE</p><h1>Gjithçka në<br />një vend.</h1><p>Menaxhoni përmbajtjen e Garnet nga një panel i vetëm.</p></div><a href="/sq" target="_blank" rel="noreferrer">Shiko faqen publike ↗</a></div>
+            <div className="admin-heading"><div><p className="admin-eyebrow">PËRMBLEDHJE</p><h1>Gjithçka në<br />një vend.</h1><p>Menaxhoni përmbajtjen e Garnet nga një panel i vetëm.</p></div><a href="/" target="_blank" rel="noreferrer">Shiko faqen publike</a></div>
             <div className="admin-stats">
               {[['projects','Projekte'],['materials','Materiale']].map(([key,label]) => <div key={key}><span>{label}</span><strong>{stats[key] ?? '—'}</strong></div>)}
             </div>
@@ -464,7 +464,7 @@ export default function AdminPage() {
                 </div>
                 <div className="admin-project-card-details">
                   <span><small>{section === 'materials' ? 'MATERIALI' : 'PROJEKTI'} #{project.id}</small><strong>{titleOf(project)}</strong><em>{section === 'materials' ? [project.category === 'PANELE' ? 'Panele' : 'Pllaka', project.color, project.dimensions].filter(Boolean).join(' · ') : [project.location, project.area_m2 ? `${project.area_m2} m²` : null].filter(Boolean).join(' · ')}</em></span>
-                  <span aria-hidden="true">Hap {section === 'materials' ? 'materialin' : 'projektin'} ↗</span>
+                  <span aria-hidden="true">Hap {section === 'materials' ? 'materialin' : 'projektin'}</span>
                 </div>
               </article>;
             })}{list.items.length === 0 && <div className="admin-empty">Ende nuk ka {section === 'materials' ? 'materiale' : 'projekte'}.</div>}</div>}
@@ -473,7 +473,7 @@ export default function AdminPage() {
         ) : (
           <>
             <div className="admin-heading"><div><p className="admin-eyebrow">PËRMBAJTJA / {section.toUpperCase()}</p><h1>{config?.label}</h1><p>{list.total} regjistrime në këtë seksion.</p></div><button className="admin-primary" onClick={() => void edit()}>+ Shto {config?.singular}</button></div>
-            {section === 'media' && <div className="admin-upload"><input id="admin-file" type="file" accept="image/*" onChange={(event) => setFile(event.target.files?.[0] || null)} /><span>{file ? file.name : 'Zgjidhni një fotografi për Cloudinary.'}</span><button disabled={!file || busy} onClick={upload}>{busy ? 'Duke ngarkuar…' : 'Ngarko ↗'}</button></div>}
+            {section === 'media' && <div className="admin-upload"><input id="admin-file" type="file" accept="image/*" onChange={(event) => setFile(event.target.files?.[0] || null)} /><span>{file ? file.name : 'Zgjidhni një fotografi për Cloudinary.'}</span><button disabled={!file || busy} onClick={upload}>{busy ? 'Duke ngarkuar…' : 'Ngarko'}</button></div>}
             <div className="admin-table-wrap"><table><thead><tr><th>EMRI / PËRSHKRIMI</th><th>ID</th><th>STATUSI</th><th>VEPRIMET</th></tr></thead><tbody>
       {list.items.map((row) => <tr key={row.id}>
                 <td><div className="admin-item">{section === 'media' && typeof row.secure_url === 'string' && <Image src={row.secure_url} alt="" width={44} height={44} /> }<div><strong>{titleOf(row)}</strong><small>{String(row.slug || row.cloudinary_public_id || row.subject || '')}</small></div></div></td>
@@ -535,7 +535,7 @@ export default function AdminPage() {
           </section>}
           {error && <p className="admin-error" role="alert">{error}</p>}
           {notice && <p className="admin-success" role="status">{notice}</p>}
-          <div className="admin-editor-actions"><button type="button" onClick={closeEditor}>Anulo</button>{(section === 'projects' || section === 'materials') && Boolean(draft.id) && <button type="button" disabled={busy} onClick={() => void remove(draft as Row)}>Fshi {section === 'materials' ? 'materialin' : 'projektin'}</button>}<button type="submit" disabled={busy}>{busy ? 'Duke ruajtur…' : draft.id ? 'Ruaj ndryshimet ↗' : `Krijo ${section === 'materials' ? 'materialin' : 'projektin'} ↗`}</button></div>
+          <div className="admin-editor-actions"><button type="button" onClick={closeEditor}>Anulo</button>{(section === 'projects' || section === 'materials') && Boolean(draft.id) && <button type="button" disabled={busy} onClick={() => void remove(draft as Row)}>Fshi {section === 'materials' ? 'materialin' : 'projektin'}</button>}<button type="submit" disabled={busy}>{busy ? 'Duke ruajtur…' : draft.id ? 'Ruaj ndryshimet' : `Krijo ${section === 'materials' ? 'materialin' : 'projektin'}`}</button></div>
         </form>
       </div></div>}
     </div>

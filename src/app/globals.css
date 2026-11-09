@@ -2711,12 +2711,7 @@ dd {
     background: #111b;
   }
   .project-card .image-action {
-    font-size: 0;
-    gap: 0;
-    padding: 8px;
-  }
-  .project-card .image-action > .arrow {
-    font-size: 23px;
+    display: none;
   }
   .material-card .image-action {
     display: none;
