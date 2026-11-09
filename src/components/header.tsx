@@ -83,26 +83,28 @@ export function Header({ locale }: { locale: Locale }) {
       </header>
       <dialog ref={dialog} className="mobile-menu" onCancel={() => setOpen(false)}>
         <div className="mobile-menu-top">
-          <span>GARNET</span>
-          <button onClick={close} aria-label={t(locale, 'close')}>
-            ×
+          <Link className="mobile-menu-brand" href={localizedPath(locale)} onClick={close} aria-label={`Garnet — ${t(locale, 'home')}`}>
+            <Image src={site.logo} alt="" width={1254} height={1254} />
+            <span aria-hidden="true"><Image src="/brand/garnet-logo-transparent.png" alt="" width={1254} height={1254} /></span>
+          </Link>
+          <button className="mobile-menu-close" onClick={close} aria-label={t(locale, 'close')}>
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
           </button>
         </div>
-        <nav aria-label={t(locale, 'navigation')}>
-          {nav.map(({ key, path }, index) => (
-            <Link onClick={close} key={key} href={localizedPath(locale, path)}>
-              <small>0{index + 1}</small>
+        <div className="mobile-menu-main">
+          <p className="mobile-menu-label">{t(locale, 'navigation')}</p>
+          <nav aria-label={t(locale, 'navigation')}>
+          {nav.map(({ key, path }) => (
+            <Link onClick={close} key={key} href={localizedPath(locale, path)} aria-current={pathname === localizedPath(locale, path) || pathname.startsWith(`${localizedPath(locale, path)}/`) ? 'page' : undefined}>
               {t(locale, key)}
             </Link>
           ))}
-        </nav>
+          </nav>
+        </div>
         <div className="mobile-menu-bottom">
-          {languages}
-          <p>
-            {site.address}
-            <br />
-            {t(locale, 'location')}
-          </p>
+          <div className="mobile-menu-languages"><span>{t(locale, 'language')}</span>{languages}</div>
+          <p>{site.address} · {t(locale, 'location')}</p>
         </div>
       </dialog>
     </>
