@@ -34,7 +34,7 @@ export async function Footer({ locale }: { locale: Locale }) {
           </p>
           <p>
             Yllran Beqiri<br />
-            <a href="tel:+389659569">+389 659 569</a>
+            <a href="tel:+38970659569">+389 70 659 569</a>
           </p>
         </div>
         <div className="footer-team">

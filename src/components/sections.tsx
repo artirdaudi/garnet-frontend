@@ -14,6 +14,7 @@ export function StudioPreview({ locale }: { locale: Locale }) {
         <Image className="studio-logo" src={site.studioLogo} alt="Archstudio Garnet" width={120} height={120} />
       </div>
       <div className="studio-copy">
+        <div className="studio-rule" aria-hidden="true"><span /></div>
         <h2>Archstudio Garnet</h2>
         <p>{t(locale, 'studioIntro')}</p>
         <div className="architect-names">

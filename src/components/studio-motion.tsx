@@ -12,6 +12,14 @@ export function StudioMotion({ children }: { children: ReactNode }) {
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
     let frame = 0;
 
+    function progressFor(element: Element) {
+      const { top, bottom } = element.getBoundingClientRect();
+      const height = window.innerHeight;
+      const entering = clamp((height * .9 - top) / (height * .58));
+      const leaving = clamp((bottom - height * .08) / (height * .42));
+      return Math.min(entering, leaving);
+    }
+
     function update() {
       frame = 0;
       if (!root) return;
@@ -19,12 +27,17 @@ export function StudioMotion({ children }: { children: ReactNode }) {
         delete root.dataset.motion;
         return;
       }
-      const { top, bottom } = root.getBoundingClientRect();
-      const height = window.innerHeight;
-      const entering = clamp((height * .92 - top) / (height * .56));
-      const leaving = clamp((bottom - height * .08) / (height * .46));
-      root.style.setProperty('--studio-visibility', String(Math.min(entering, leaving)));
-      root.style.setProperty('--studio-offset', `${42 * (1 - entering) - 42 * (1 - leaving)}px`);
+      const visual = root.querySelector('.studio-visual');
+      const copy = root.querySelector('.studio-copy');
+      if (!visual || !copy) return;
+      const visualProgress = progressFor(visual);
+      const copyProgress = progressFor(copy);
+      root.style.setProperty('--studio-visual-progress', String(visualProgress));
+      root.style.setProperty('--studio-copy-progress', String(copyProgress));
+      root.style.setProperty('--studio-visual-mask', `${42 * (1 - visualProgress)}%`);
+      root.style.setProperty('--studio-visual-shift', `${65 * (1 - visualProgress)}px`);
+      root.style.setProperty('--studio-copy-shift', `${70 * (1 - copyProgress)}px`);
+      root.style.setProperty('--studio-rule-width', `${100 * copyProgress}%`);
       root.dataset.motion = 'ready';
     }
     function schedule() { if (!frame) frame = requestAnimationFrame(update); }
