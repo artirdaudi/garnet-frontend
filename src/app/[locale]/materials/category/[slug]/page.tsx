@@ -71,7 +71,7 @@ export default async function CategoryPage({ params }: DetailParams) {
           <p className="catalog-hero-lead">{category.description[locale]}</p>
           <p className="catalog-hero-detail">{words.lead}</p>
           <a className="catalog-hero-action" href="#koleksioni">{words.browse}</a>
-          <span className="catalog-hero-count">{String(displayMaterials.length).padStart(2, '0')} {demoMode ? words.demoPieces : words.pieces}</span>
+          {!demoMode && <span className="catalog-hero-count">{String(displayMaterials.length).padStart(2, '0')} {words.pieces}</span>}
         </div>
       </header>
       <MaterialCategoryCatalog materials={displayMaterials} locale={locale} category={category.slug} demoMode={demoMode} />

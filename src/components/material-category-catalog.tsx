@@ -44,7 +44,7 @@ export function MaterialCategoryCatalog({ materials, locale, category, demoMode 
   }
   return <section className="catalog-section" id="koleksioni" aria-label={t(locale, category === 'tiles' ? 'tiles' : 'panels')}>
     <div className="wrap">
-      <div className="catalog-section-heading"><h2 className="sr-only">{t(locale, category === 'tiles' ? 'tiles' : 'panels')}</h2><span>{String(materials.length).padStart(2, '0')} / {demoMode ? demo.results : words.results}</span></div>
+      <div className="catalog-section-heading"><h2 className="sr-only">{t(locale, category === 'tiles' ? 'tiles' : 'panels')}</h2>{!demoMode && <span>{String(materials.length).padStart(2, '0')} / {words.results}</span>}</div>
       {demoMode && <p className="catalog-demo-note"><strong>{demo.label}</strong>{demo.note}</p>}
       {materials.length ? <div className="catalog-grid">{visible.map((material, index) => {
         const gallery = photos(material);
