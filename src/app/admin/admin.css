@@ -234,3 +234,76 @@
 .admin-project-photo .admin-hero-order{z-index:2}
 @media(max-width:900px){.admin-project-cards,.admin-project-loading{margin-left:22px;margin-right:22px}}
 @media(max-width:650px){.admin-project-card-photo{height:250px}.admin-project-card-details{padding:18px;align-items:flex-start}.admin-project-card-details>span:last-child{display:none}.admin-project-photo-grid{grid-template-columns:1fr 1fr;gap:9px}.admin-project-photo .admin-hero-order,.admin-project-photo .admin-hero-remove{width:28px;height:28px;font-size:12px}.admin-project-photo .admin-hero-remove{font-size:22px}}
+
+/* Mobile admin layout */
+@media(max-width:900px){
+ .admin-shell{display:block;min-width:0}
+ .admin-sidebar{position:relative;top:auto;height:auto;max-height:none;overflow:visible;padding:15px 20px 12px;gap:8px}
+ .admin-brand{display:flex;align-items:center;justify-content:center;border:0;padding:0;margin:0;min-height:60px}
+ .admin-brand img{width:145px!important;height:60px!important;object-fit:contain}
+ .admin-side-caption{display:none}
+ .admin-sidebar nav{display:flex;gap:5px;align-items:stretch;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;padding:2px 0 9px}
+ .admin-sidebar nav button{flex:0 0 auto;min-height:44px;padding:10px 13px;white-space:nowrap;font-size:12px}
+ .admin-nav-divider{width:1px;height:auto;flex:0 0 1px;margin:8px 4px;background:#8c5e50}
+ .admin-side-bottom{display:flex;gap:20px;justify-content:center;align-items:center;margin:0;padding:9px 0 0;border-top:1px solid #795343}
+ .admin-side-bottom a,.admin-side-bottom button{min-height:36px;display:inline-flex;align-items:center;font-size:12px}
+ .admin-topbar{height:auto;min-height:42px;padding:10px 22px;line-height:1.4}
+ .admin-heading{padding-top:35px;padding-bottom:25px}
+ .admin-alert{margin-left:22px;margin-right:22px}
+ .admin-pagination{margin-left:22px;margin-right:22px;gap:12px}
+ .admin-site-hero-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .admin-login{display:flex;flex-direction:column;min-height:100svh}
+ .admin-login-art{flex:none;min-height:150px;max-height:24svh;padding:12px}
+ .admin-login-art img{width:160px;max-height:135px}
+ .admin-login-card{width:min(430px,calc(100% - 42px));padding:30px 0 55px;gap:15px;align-self:center}
+ .admin-login-card h1{font-size:clamp(42px,12vw,60px);margin:0 0 7px}
+ .admin-login-card h1 span{font-size:15px;letter-spacing:.14em;margin-top:10px}
+ .admin-login-card>p:not(.admin-eyebrow):not(.admin-error){margin-bottom:4px}
+ .admin-login-card input{min-height:48px;font-size:16px}
+ .admin-login-card>button{min-height:50px}
+ .admin-sidebar{padding:12px 12px 8px}
+ .admin-brand{min-height:52px}
+ .admin-brand img{height:52px!important}
+ .admin-sidebar nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;gap:6px}
+ .admin-sidebar nav button{font-size:11px;padding:10px 11px;white-space:normal;justify-content:center;text-align:center}
+ .admin-nav-divider{display:none}
+ .admin-topbar{padding:9px 16px;font-size:9px;letter-spacing:.12em}
+ .admin-heading{padding:26px 16px 22px;display:flex;flex-direction:column;align-items:stretch;gap:14px}
+ .admin-heading h1{font-size:clamp(37px,11vw,54px);overflow-wrap:anywhere}
+ .admin-heading .admin-primary{margin-top:0;align-self:start}
+ .admin-heading>a{align-self:start}
+ .admin-stats{padding:0 16px;gap:8px}
+ .admin-stats>div{padding:17px;min-height:100px}
+ .admin-stats strong{font-size:34px}
+ .admin-quick{padding:28px 16px}
+ .admin-quick>div{grid-template-columns:1fr}
+ .admin-alert{margin:10px 16px 0}
+ .admin-upload,.admin-site-hero,.admin-project-cards,.admin-project-loading,.admin-table-wrap{margin-left:16px;margin-right:16px}
+ .admin-upload{display:flex;flex-wrap:wrap;align-items:start;padding:16px;gap:12px}
+ .admin-upload input{max-width:100%;width:100%;font-size:14px}
+ .admin-upload button{margin:0;min-height:44px}
+ .admin-site-hero{padding:17px}
+ .admin-site-hero-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .admin-project-cards{gap:14px}
+ .admin-project-card-photo{height:clamp(220px,65vw,350px)}
+ .admin-project-card-details{padding:14px}
+ .admin-project-card-details strong{font-size:24px}
+ .admin-project-card-arrows{left:10px;right:10px;bottom:10px}
+ .admin-project-card-arrows button{width:44px;height:44px}
+ .admin-pagination{margin:0 16px 30px;justify-content:space-between;gap:8px}
+ .admin-pagination button{min-height:44px;padding:9px 11px}
+ .admin-modal-backdrop{align-items:flex-end}
+ .admin-editor{width:100%;height:100dvh;max-height:100dvh;box-shadow:none}
+ .admin-editor-head{padding:15px 18px;min-height:70px}
+ .admin-editor-head h2{font-size:27px}
+ .admin-editor-head button{width:44px;height:44px;display:grid;place-items:center}
+ .admin-editor form{padding:20px 18px 35px;gap:18px}
+ .admin-editor input,.admin-editor select,.admin-editor textarea{font-size:16px;min-height:44px}
+ .admin-editor-actions{flex-wrap:wrap;justify-content:stretch;gap:8px;padding:12px 0}
+ .admin-editor-actions button{flex:1 1 auto;min-height:44px;padding:10px}
+ .admin-project-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .admin-image-lightbox{padding:12px}
+}
+@media(max-width:390px){.admin-site-hero-list{grid-template-columns:1fr}.admin-project-photo-grid{grid-template-columns:1fr 1fr}.admin-stats{grid-template-columns:1fr 1fr}}

@@ -7,7 +7,7 @@ function example(id: string, category: 'tiles' | 'panels', name: string, photo: 
   return {
     id: `demo-${id}`, slug: `demo-${id}`, name, category,
     categoryTitle: category === 'tiles' ? localized('Pllaka', 'Плочки', 'Tiles') : localized('Panele Dekoruese', 'Декоративни панели', 'Decorative Panels'),
-    description, coverImage: photo, gallery: [photo],
+    description, coverImage: photo, gallery: [photo, image(`${id}-detail`, category === 'tiles' ? '/images/stone.jpg' : '/images/wood.jpg', `Pamje tjetër e materialit ${name}`)],
     attributes: { finish: localized('', '', ''), size, application: localized('', '', ''), color },
     featured: false, isNew: false, active: true, isDemo: true,
   };

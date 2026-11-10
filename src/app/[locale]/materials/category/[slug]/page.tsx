@@ -4,15 +4,15 @@ import { notFound } from 'next/navigation';
 import { MaterialCategoryCatalog } from '@/components/material-category-catalog';
 import { demoMaterialsFor } from '@/data/demo-materials';
 import { localizedPath, t } from '@/lib/i18n';
-import { getCategories, getMaterials } from '@/lib/repository';
+import { getCategories, getMaterialBySlug, getMaterials } from '@/lib/repository';
 import { routeLocale, type DetailParams } from '@/lib/route';
 import { metadata, siteUrl } from '@/lib/seo';
 import type { Locale, Material } from '@/lib/types';
 
 const copy = {
-  sq: { kicker: 'Koleksioni Garnet', lead: 'Zgjidhni sipas ngjyrës dhe dimensionit, pastaj hapni materialin për të parë fotografitë dhe hollësitë.', browse: 'Shikoni koleksionin', pieces: 'materiale në koleksion', demoPieces: 'shembuj demo' },
-  mk: { kicker: 'Колекција Garnet', lead: 'Изберете според боја и димензии, потоа отворете го материјалот за фотографии и детали.', browse: 'Погледнете ја колекцијата', pieces: 'материјали во колекцијата', demoPieces: 'демо примери' },
-  en: { kicker: 'The Garnet collection', lead: 'Filter by colour and dimensions, then open a material to view its photographs and details.', browse: 'Browse the collection', pieces: 'materials in the collection', demoPieces: 'demo examples' },
+  sq: { kicker: 'Koleksioni Garnet', lead: 'Shikoni fotografitë e secilit material dhe hapeni për të lexuar më shumë hollësi.', browse: 'Shikoni koleksionin', pieces: 'materiale në koleksion', demoPieces: 'shembuj demo' },
+  mk: { kicker: 'Колекција Garnet', lead: 'Погледнете ги фотографиите на секој материјал и отворете го за повеќе детали.', browse: 'Погледнете ја колекцијата', pieces: 'материјали во колекцијата', demoPieces: 'демо примери' },
+  en: { kicker: 'The Garnet collection', lead: 'Open a material to view its photographs and details.', browse: 'Browse the collection', pieces: 'materials in the collection', demoPieces: 'demo examples' },
 };
 
 async function categoryData(params: DetailParams['params']) {
@@ -54,7 +54,11 @@ export default async function CategoryPage({ params }: DetailParams) {
   const words = copy[locale];
   const heroImage = category.image;
   const demoMode = materials.length === 0;
-  const displayMaterials = demoMode ? demoMaterialsFor(category.slug) : materials;
+  const detailed = demoMode ? [] : await Promise.allSettled(materials.map((item) => getMaterialBySlug(item.slug)));
+  const displayMaterials = demoMode ? demoMaterialsFor(category.slug) : materials.map((item, index) => {
+    const result = detailed[index];
+    return result.status === 'fulfilled' && result.value ? { ...item, gallery: result.value.gallery } : item;
+  });
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(locale, category.slug, category.title[locale], materials)).replace(/</g, '\\u003c') }} />
