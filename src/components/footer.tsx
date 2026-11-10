@@ -25,7 +25,6 @@ export async function Footer({ locale }: { locale: Locale }) {
             <br />
             {t(locale, 'location')}
           </p>
-          <a href="mailto:info@garnetstudio.mk">info@garnetstudio.mk</a>
         </div>
         <div className="footer-team">
           <p className="eyebrow">Garnet — The Art of Tile</p>
