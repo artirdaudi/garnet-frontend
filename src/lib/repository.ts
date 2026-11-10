@@ -75,6 +75,10 @@ export const getProjects = cache(async () => {
   const rows = await all('projects');
   return rows.map((x) => asProject(x));
 });
+export const getProjectsPage = cache(async (page: number, pageSize = 10) => {
+  const result = await read<Page>(`/api/v1/projects?page=${page}&page_size=${pageSize}`);
+  return { projects: result.items.map((item) => asProject(item)), total: result.total };
+});
 export async function getFeaturedProjects() { return (await getProjects()).filter((x) => x.featured); }
 export async function getHeroImages(): Promise<Media[]> {
   try {
@@ -105,7 +109,7 @@ export async function getMaterialBySlug(slug: string) {
   return asMaterial(await response.json(), true);
 }
 export const getCategories = cache(async (): Promise<Category[]> => [
-  { slug: 'tiles', title: { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' }, description: { sq: 'Shikoni përzgjedhjen e pllakave Garnet për shtëpi dhe biznese në Tetovë.', mk: 'Погледнете го изборот на плочки Garnet за домови и деловни простори во Тетово.', en: 'Explore Garnet tiles for homes and businesses in Tetovo.' }, image: images.bathroom },
+  { slug: 'tiles', title: { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' }, description: { sq: 'Shikoni përzgjedhjen e pllakave Garnet për shtëpi dhe biznese në Tetovë.', mk: 'Погледнете го изборот на плочки Garnet за домови и деловни простори во Тетово.', en: 'Explore Garnet tiles for homes and businesses in Tetovo.' }, image: { id: 'tiles-hero', url: '/images/tiles-hero.jpg', alt: { sq: 'Pllaka porcelani në tone të ngrohta', mk: 'Порцелански плочки во топли тонови', en: 'Porcelain tiles in warm tones' }, width: 1672, height: 941 } },
   { slug: 'panels', title: { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }, description: { sq: 'Shikoni panelet dekoruese Garnet për mure dhe interierë në Tetovë.', mk: 'Погледнете ги декоративните панели Garnet за ѕидови и ентериери во Тетово.', en: 'Explore Garnet decorative panels for walls and interiors in Tetovo.' }, image: images.wood },
 ]);
 export async function getMaterialsForProject(id: string): Promise<Material[]> {

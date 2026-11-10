@@ -19,7 +19,7 @@ function Chevron({ direction }: { direction: 'left' | 'right' }) {
   return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d={direction === 'left' ? 'M14.5 5 7.5 12l7 7' : 'm9.5 5 7 7-7 7'} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
-export function ProjectShowcase({ projects, locale }: { projects: Project[]; locale: Locale }) {
+export function ProjectShowcase({ projects, locale, showArrows = true, archive = false }: { projects: Project[]; locale: Locale; showArrows?: boolean; archive?: boolean }) {
   const [cardImages, setCardImages] = useState<Record<string, number>>({});
   const [activeProject, setActiveProject] = useState<number | null>(null);
   const [activeImage, setActiveImage] = useState(0);
@@ -116,7 +116,7 @@ export function ProjectShowcase({ projects, locale }: { projects: Project[]; loc
 
   return (
     <>
-      <div className="project-showcase">
+      <div className={`project-showcase${archive ? ' project-showcase-archive' : ''}`}>
         {projects.map((project, projectIndex) => {
           const images = imagesOf(project);
           const imageIndex = cardImages[project.id] || 0;
@@ -146,7 +146,7 @@ export function ProjectShowcase({ projects, locale }: { projects: Project[]; loc
                 <Image key={images[imageIndex].url} src={images[imageIndex].url} alt={images[imageIndex].alt[locale] || project.title[locale]} fill sizes="(max-width: 700px) 90vw, 65vw" />
                 <span className="showcase-title">{project.title[locale]}</span>
               </button>
-              {images.length > 1 && (
+              {showArrows && images.length > 1 && (
                 <div className="showcase-navigation" aria-label={copy.swipe}>
                   <button type="button" onClick={() => stepCard(project, -1)} aria-label={`${copy.previous}: ${project.title[locale]}`}><Chevron direction="left" /></button>
                   <button type="button" onClick={() => stepCard(project, 1)} aria-label={`${copy.next}: ${project.title[locale]}`}><Chevron direction="right" /></button>
@@ -194,11 +194,13 @@ export function ProjectShowcase({ projects, locale }: { projects: Project[]; loc
               >
                 <Image key={activeImages[activeImage].url} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} fill sizes="(max-width: 700px) 100vw, 65vw" />
               </button>
-              {activeImages.length > 1 && <div className="showcase-dialog-navigation">
+              {activeImages.length > 1 && (showArrows ? <div className="showcase-dialog-navigation">
                 <button type="button" onClick={() => stepModal(-1)} aria-label={copy.previous}><Chevron direction="left" /></button>
                 <div className="showcase-dots" aria-hidden="true">{activeImages.map((image, index) => <span className={index === activeImage ? 'active' : ''} key={`${image.id}-${index}`} />)}</div>
                 <button type="button" onClick={() => stepModal(1)} aria-label={copy.next}><Chevron direction="right" /></button>
-              </div>}
+              </div> : <div className="showcase-dialog-photo-pages" aria-label={copy.swipe}>
+                {activeImages.map((image, index) => <button type="button" key={`${image.id}-${index}`} onClick={() => { setActiveImage(index); setZoom(1); setOffset({ x: 0, y: 0 }); }} aria-label={`${index + 1} / ${activeImages.length}`} aria-current={index === activeImage ? 'true' : undefined}>{String(index + 1).padStart(2, '0')}</button>)}
+              </div>)}
               <div className="showcase-mobile-cue" aria-hidden="true"><span>{active.title[locale]}</span><span>{copy.details} ↓</span></div>
             </div>
             <div className="showcase-dialog-details">
@@ -214,7 +216,7 @@ export function ProjectShowcase({ projects, locale }: { projects: Project[]; loc
           </div>
         )}
       </dialog>
-      <dialog ref={photoDialog} className="showcase-photo-dialog" aria-label={copy.enlarge} onClick={(event) => { if (event.target === photoDialog.current) closePhoto(); }}>
+      <dialog ref={photoDialog} className="showcase-photo-dialog" aria-label={copy.enlarge} onClick={(event) => { if (event.target === photoDialog.current) closePhoto(); }} onKeyDown={(event) => { if (event.key === 'ArrowRight') stepModal(1); if (event.key === 'ArrowLeft') stepModal(-1); }}>
         {active && <>
           <button type="button" className="showcase-photo-close" onClick={closePhoto} aria-label={copy.closePhoto}>×</button>
           <div
@@ -252,7 +254,7 @@ export function ProjectShowcase({ projects, locale }: { projects: Project[]; loc
           >
             <Image key={activeImages[activeImage].url} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} fill sizes="100vw" style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})` }} />
           </div>
-          {activeImages.length > 1 && <div className="showcase-photo-navigation">
+          {showArrows && activeImages.length > 1 && <div className="showcase-photo-navigation">
             <button type="button" onClick={() => stepModal(-1)} aria-label={copy.previous}><Chevron direction="left" /></button>
             <button type="button" onClick={() => stepModal(1)} aria-label={copy.next}><Chevron direction="right" /></button>
           </div>}

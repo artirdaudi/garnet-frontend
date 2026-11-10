@@ -1,39 +1,76 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { routeLocale, type DetailParams } from '@/lib/route';
-import { metadata } from '@/lib/seo';
+import { MaterialCategoryCatalog } from '@/components/material-category-catalog';
+import { demoMaterialsFor } from '@/data/demo-materials';
 import { localizedPath, t } from '@/lib/i18n';
-import { getMaterials, getCategories } from '@/lib/repository';
-import { PageHeading, DemoNote, ContactCTA, TextLink } from '@/components/ui';
-import { Picture } from '@/components/media';
-import { MaterialGrid } from '@/components/cards';
+import { getCategories, getMaterials } from '@/lib/repository';
+import { routeLocale, type DetailParams } from '@/lib/route';
+import { metadata, siteUrl } from '@/lib/seo';
+import type { Locale, Material } from '@/lib/types';
+
+const copy = {
+  sq: { kicker: 'Koleksioni Garnet', lead: 'Zgjidhni sipas ngjyrës dhe dimensionit, pastaj hapni materialin për të parë fotografitë dhe hollësitë.', browse: 'Shikoni koleksionin', pieces: 'materiale në koleksion', demoPieces: 'shembuj demo' },
+  mk: { kicker: 'Колекција Garnet', lead: 'Изберете според боја и димензии, потоа отворете го материјалот за фотографии и детали.', browse: 'Погледнете ја колекцијата', pieces: 'материјали во колекцијата', demoPieces: 'демо примери' },
+  en: { kicker: 'The Garnet collection', lead: 'Filter by colour and dimensions, then open a material to view its photographs and details.', browse: 'Browse the collection', pieces: 'materials in the collection', demoPieces: 'demo examples' },
+};
+
+async function categoryData(params: DetailParams['params']) {
+  const { slug } = await params;
+  if (slug !== 'tiles' && slug !== 'panels') notFound();
+  const [categories, allMaterials] = await Promise.all([getCategories(), getMaterials()]);
+  const category = categories.find((item) => item.slug === slug);
+  if (!category) notFound();
+  return { category, materials: allMaterials.filter((item) => item.category === slug) };
+}
+
 export async function generateMetadata({ params }: DetailParams) {
   const locale = await routeLocale(params);
-  const { slug } = await params;
-  const category = (await getCategories()).find((item) => item.slug === slug);
-  if (!category) notFound();
-  return metadata(locale, category.title[locale], `materials/category/${slug}`, category.description[locale]);
+  const { category } = await categoryData(params);
+  const description = `${category.description[locale]} ${copy[locale].lead}`;
+  const title = { sq: `${category.title.sq} në Garnet`, mk: `${category.title.mk} во Garnet`, en: `${category.title.en} at Garnet` }[locale];
+  return metadata(locale, title, `materials/category/${category.slug}`, description, category.image.url);
 }
+
+function structuredData(locale: Locale, slug: string, title: string, materials: Material[]) {
+  const categoryUrl = `${siteUrl}${localizedPath(locale, `materials/category/${slug}`)}`;
+  return [
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t(locale, 'home'), item: `${siteUrl}${localizedPath(locale, '')}` },
+      { '@type': 'ListItem', position: 2, name: t(locale, 'materials'), item: `${siteUrl}${localizedPath(locale, 'materials')}` },
+      { '@type': 'ListItem', position: 3, name: title, item: categoryUrl },
+    ] },
+    { '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, url: categoryUrl, mainEntity: {
+      '@type': 'ItemList', numberOfItems: materials.length, itemListElement: materials.map((material, index) => ({
+        '@type': 'ListItem', position: index + 1, name: material.name, url: `${siteUrl}${localizedPath(locale, `materials/${material.slug}`)}`,
+      })),
+    } },
+  ];
+}
+
 export default async function CategoryPage({ params }: DetailParams) {
   const locale = await routeLocale(params);
-  const { slug } = await params;
-  const category = (await getCategories()).find((item) => item.slug === slug);
-  if (!category) notFound();
-  const materials = (await getMaterials()).filter((item) => item.category === slug);
+  const { category, materials } = await categoryData(params);
+  const words = copy[locale];
+  const heroImage = category.image;
+  const demoMode = materials.length === 0;
+  const displayMaterials = demoMode ? demoMaterialsFor(category.slug) : materials;
   return (
     <>
-      <PageHeading
-        locale={locale}
-        eyebrow={t(locale, 'materials')}
-        title={category.title[locale]}
-        description={category.description[locale]}
-      />
-      <Picture media={category.image} locale={locale} className="category-cover" priority sizes="100vw" />
-      <section className="related-section wrap">
-        <TextLink href={localizedPath(locale, 'materials')}>{t(locale, 'allMaterials')}</TextLink>
-        <DemoNote locale={locale} kind="materials" />
-        {materials.length ? <MaterialGrid materials={materials} locale={locale} /> : <p className="material-empty">{{ sq: 'Ende nuk ka materiale në këtë kategori.', mk: 'Сè уште нема материјали во оваа категорија.', en: 'No materials in this category yet.' }[locale]}</p>}
-      </section>
-      <ContactCTA locale={locale} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(locale, category.slug, category.title[locale], materials)).replace(/</g, '\\u003c') }} />
+      <header className={`catalog-hero catalog-hero-${category.slug}`}>
+        <div className="catalog-hero-image"><Image src={heroImage.url} alt="" fill priority sizes="(max-width: 700px) 100vw, 60vw" /></div>
+        <div className="catalog-hero-inner wrap">
+          <nav className="catalog-breadcrumb" aria-label="Breadcrumb"><Link href={localizedPath(locale, '')}>Garnet</Link><span>/</span><Link href={localizedPath(locale, 'materials')}>{t(locale, 'materials')}</Link><span>/</span><span aria-current="page">{category.title[locale]}</span></nav>
+          <p className="catalog-kicker">{words.kicker}</p>
+          <h1>{category.title[locale]}</h1>
+          <p className="catalog-hero-lead">{category.description[locale]}</p>
+          <p className="catalog-hero-detail">{words.lead}</p>
+          <a className="catalog-hero-action" href="#koleksioni">{words.browse}</a>
+          <span className="catalog-hero-count">{String(displayMaterials.length).padStart(2, '0')} {demoMode ? words.demoPieces : words.pieces}</span>
+        </div>
+      </header>
+      <MaterialCategoryCatalog materials={displayMaterials} locale={locale} category={category.slug} demoMode={demoMode} />
     </>
   );
 }

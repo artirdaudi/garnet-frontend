@@ -93,9 +93,9 @@ export const copy = {
   residential: l('Banimi', 'Станбени', 'Residential'),
   commercial: l('Komerciale', 'Комерцијални', 'Commercial'),
   projectIntro: l(
-    'Një vështrim në formë, hapësirë dhe material.',
-    'Поглед кон формата, просторот и материјалот.',
-    'An exploration of form, space and material.',
+    'Punë të realizuara për shtëpi dhe biznese. Shikoni projektet tona dhe detajet që i bëjnë të veçanta.',
+    'Реализирани проекти за домови и деловни простори. Погледнете ги нашите проекти и деталите што ги прават посебни.',
+    'Completed work for homes and businesses. Explore our projects and the details that make each one distinct.',
   ),
   demoProjects: l(
     'Portofol ilustrues — projekte dhe fotografi të përkohshme, jo punë të realizuara nga Garnet.',

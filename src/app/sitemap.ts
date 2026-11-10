@@ -7,6 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = [
     '',
     'projects',
+    ...Array.from({ length: Math.max(0, Math.ceil(projects.length / 10) - 1) }, (_, index) => `projects?page=${index + 2}`),
     'materials',
     'archstudio',
     'about',

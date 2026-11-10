@@ -19,6 +19,7 @@ export function Header({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const previousPath = useRef(pathname);
   const home = pathname === localizedPath(locale);
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 32);
@@ -26,6 +27,12 @@ export function Header({ locale }: { locale: Locale }) {
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
   }, []);
+  useEffect(() => {
+    if (previousPath.current !== pathname && /\/materials\/category\/(tiles|panels)$/.test(pathname)) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    previousPath.current = pathname;
+  }, [pathname]);
   useEffect(() => {
     if (open) {
       dialog.current?.showModal();

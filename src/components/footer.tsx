@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { t, locales, localizedPath, type CopyKey } from '@/lib/i18n';
+import { t, localizedPath, type CopyKey } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 import { site, team } from '@/data/site';
 import { getSiteSettings } from '@/lib/repository';
+import { FooterLanguageLinks } from './footer-language-links';
 export async function Footer({ locale }: { locale: Locale }) {
   const settings = await getSiteSettings();
   const navigation: { key: CopyKey; path: string }[] = [
@@ -69,13 +70,7 @@ export async function Footer({ locale }: { locale: Locale }) {
             </svg>
             <span>Facebook</span>
           </a>
-          <div className="languages">
-            {locales.map((lang) => (
-              <Link href={localizedPath(lang)} key={lang} hrefLang={lang} aria-current={lang === locale ? 'page' : undefined}>
-                {lang.toUpperCase()}
-              </Link>
-            ))}
-          </div>
+          <FooterLanguageLinks locale={locale} />
         </div>
       </div>
       <div className="footer-bottom">

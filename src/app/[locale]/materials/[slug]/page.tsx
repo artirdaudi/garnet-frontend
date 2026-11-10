@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { routeLocale, type DetailParams } from '@/lib/route';
-import { metadata } from '@/lib/seo';
+import { metadata, siteUrl } from '@/lib/seo';
 import { localizedPath, t, type CopyKey } from '@/lib/i18n';
 import { getMaterialBySlug, getProjectsForMaterial } from '@/lib/repository';
 import { Picture } from '@/components/media';
@@ -12,7 +12,8 @@ export async function generateMetadata({ params }: DetailParams) {
   const { slug } = await params;
   const material = await getMaterialBySlug(slug);
   if (!material) notFound();
-  return metadata(locale, material.name, `materials/${slug}`, material.description[locale], material.coverImage.url);
+  const description = material.description[locale] || `${material.name} — ${material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)}. ${[material.attributes.color[locale], material.attributes.size].filter(Boolean).join(', ')}. ${t(locale, 'location')}.`;
+  return metadata(locale, material.name, `materials/${slug}`, description, material.coverImage.url);
 }
 export default async function MaterialDetail({ params }: DetailParams) {
   const locale = await routeLocale(params);
@@ -27,8 +28,25 @@ export default async function MaterialDetail({ params }: DetailParams) {
     ['application', material.attributes.application[locale]],
     ['color', material.attributes.color[locale]],
   ].filter(([, value]) => Boolean(value)) as [CopyKey, string][];
+  const productUrl = `${siteUrl}${localizedPath(locale, `materials/${slug}`)}`;
+  const categoryUrl = `${siteUrl}${localizedPath(locale, `materials/category/${material.category}`)}`;
+  const structuredData = [
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t(locale, 'home'), item: `${siteUrl}${localizedPath(locale, '')}` },
+      { '@type': 'ListItem', position: 2, name: material.categoryTitle?.[locale] || t(locale, material.category as CopyKey), item: categoryUrl },
+      { '@type': 'ListItem', position: 3, name: material.name, item: productUrl },
+    ] },
+    { '@context': 'https://schema.org', '@type': 'Product', name: material.name, url: productUrl,
+      image: [material.coverImage, ...material.gallery].map((image) => image.url),
+      description: material.description[locale] || undefined,
+      category: material.categoryTitle?.[locale] || t(locale, material.category as CopyKey),
+      color: material.attributes.color[locale] || undefined,
+      size: material.attributes.size || undefined,
+    },
+  ];
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
       <section className="material-detail wrap">
         <Picture media={material.coverImage} locale={locale} priority />
         <div className="material-detail-copy">
