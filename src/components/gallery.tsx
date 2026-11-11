@@ -1,9 +1,9 @@
 'use client';
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import type { Locale, Media } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { Picture } from './media';
+import { LoadingPhoto } from './loading-photo';
 export function Gallery({ images, locale }: { images: Media[]; locale: Locale }) {
   const [selected, setSelected] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -54,7 +54,7 @@ export function Gallery({ images, locale }: { images: Media[]; locale: Locale })
           ×
         </button>
         <div className="lightbox-image">
-          <Image src={images[selected].url} fill sizes="95vw" alt={images[selected].alt[locale]} />
+          <LoadingPhoto key={images[selected].url} src={images[selected].url} alt={images[selected].alt[locale]} locale={locale} sizes="95vw" />
         </div>
         <div className="lightbox-controls">
           <button

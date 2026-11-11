@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import type { Locale, Media, Project } from '@/lib/types';
 import { t } from '@/lib/i18n';
+import { LoadingPhoto } from './loading-photo';
 
 const labels = {
   sq: { open: 'Hap projektin', previous: 'Fotografia e mëparshme', next: 'Fotografia e radhës', close: 'Mbyll projektin', closePhoto: 'Mbyll fotografinë', enlarge: 'Zmadho fotografinë', swipe: 'Rrëshqitni për të parë fotografitë', details: 'Të dhënat e projektit' },
@@ -143,7 +143,7 @@ export function ProjectShowcase({ projects, locale, showArrows = true, archive =
                 }}
                 aria-label={`${copy.open}: ${project.title[locale]}`}
               >
-                <Image key={images[imageIndex].url} src={images[imageIndex].url} alt={images[imageIndex].alt[locale] || project.title[locale]} fill sizes="(max-width: 700px) 90vw, 65vw" />
+                <LoadingPhoto key={images[imageIndex].url} src={images[imageIndex].url} alt={images[imageIndex].alt[locale] || project.title[locale]} locale={locale} sizes="(max-width: 700px) 90vw, 65vw" />
                 <span className="showcase-title">{project.title[locale]}</span>
               </button>
               {showArrows && images.length > 1 && (
@@ -192,7 +192,7 @@ export function ProjectShowcase({ projects, locale, showArrows = true, archive =
                   touchStart.current = null;
                 }}
               >
-                <Image key={activeImages[activeImage].url} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} fill sizes="(max-width: 700px) 100vw, 65vw" />
+                <LoadingPhoto key={`${active.id}-${activeImages[activeImage].url}`} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} locale={locale} sizes="(max-width: 700px) 100vw, 65vw" />
               </button>
               {activeImages.length > 1 && (showArrows ? <div className="showcase-dialog-navigation">
                 <button type="button" onClick={() => stepModal(-1)} aria-label={copy.previous}><Chevron direction="left" /></button>
@@ -252,7 +252,7 @@ export function ProjectShowcase({ projects, locale, showArrows = true, archive =
               if (zoom <= 1) setOffset({ x: 0, y: 0 });
             }}
           >
-            <Image key={activeImages[activeImage].url} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} fill sizes="100vw" style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})` }} />
+            <LoadingPhoto key={`${active.id}-${activeImages[activeImage].url}`} src={activeImages[activeImage].url} alt={activeImages[activeImage].alt[locale] || active.title[locale]} locale={locale} sizes="100vw" style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})` }} />
           </div>
           {showArrows && activeImages.length > 1 && <div className="showcase-photo-navigation">
             <button type="button" onClick={() => stepModal(-1)} aria-label={copy.previous}><Chevron direction="left" /></button>
