@@ -76,6 +76,9 @@
 .admin-editor-head h2{font:400 32px Georgia,serif;text-transform:capitalize;margin:5px 0 0}
 .admin-editor-head button{background:none;border:0;font-size:32px;color:#69776c;cursor:pointer}
 .admin-editor form{padding:28px 32px;display:grid;gap:20px}
+.admin-editor .admin-material-form{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+.admin-material-form > :not(.admin-price-field){grid-column:1/-1}
+.admin-material-form > .admin-price-field{min-width:0}
 .admin-editor textarea{resize:vertical;line-height:1.5}
 .admin-editor .admin-checkbox{display:flex;flex-direction:row-reverse;justify-content:flex-end;align-items:center;gap:10px}.admin-checkbox input{width:18px;height:18px}
 .admin-editor-actions{position:sticky;bottom:0;background:#f8faf6;border-top:1px solid #dce3d9;padding:20px 0;display:flex;justify-content:flex-end;gap:10px}

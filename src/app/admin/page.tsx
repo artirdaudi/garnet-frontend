@@ -39,6 +39,8 @@ export default function AdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const currencyRef = useRef<HTMLDivElement>(null);
   const [section, setSection] = useState('dashboard');
   const [list, setList] = useState<List>(empty);
   const [stats, setStats] = useState<Stats>({});
@@ -100,13 +102,16 @@ export default function AdminPage() {
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [previewImage]);
   useEffect(() => {
-    if (!categoryOpen) return;
-    const close = (event: MouseEvent) => { if (!categoryRef.current?.contains(event.target as Node)) setCategoryOpen(false); };
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setCategoryOpen(false); };
+    if (!categoryOpen && !currencyOpen) return;
+    const close = (event: MouseEvent) => {
+      if (!categoryRef.current?.contains(event.target as Node)) setCategoryOpen(false);
+      if (!currencyRef.current?.contains(event.target as Node)) setCurrencyOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setCategoryOpen(false); setCurrencyOpen(false); } };
     document.addEventListener('mousedown', close);
     document.addEventListener('keydown', escape);
     return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', escape); };
-  }, [categoryOpen]);
+  }, [categoryOpen, currencyOpen]);
   useEffect(() => {
     if (!notice) return;
     const timeout = window.setTimeout(() => setNotice(''), 5000);
@@ -162,12 +167,13 @@ export default function AdminPage() {
     pendingPhotos.forEach((photo) => URL.revokeObjectURL(photo.url));
     setPendingPhotos([]);
   }
-  function closeEditor() { if (busy) return; clearPendingPhotos(); setCategoryOpen(false); setDraft(null); }
+  function closeEditor() { if (busy) return; clearPendingPhotos(); setCategoryOpen(false); setCurrencyOpen(false); setDraft(null); }
   async function edit(row?: Row) {
     if (!config) return;
     clearPendingPhotos();
     setDraft(row ? { ...row } : blank(config));
     setCategoryOpen(false);
+    setCurrencyOpen(false);
     setProjectImages([]);
     if ((config.key === 'projects' || config.key === 'materials') && row) void loadProjectImages(row);
     const related = [...new Set(config.fields.filter((field) => field.resource).map((field) => field.resource!))];
@@ -222,7 +228,7 @@ export default function AdminPage() {
         if (field.type === 'boolean') payload[field.key] = value === true;
         else if (field.type === 'json') payload[field.key] = value ? JSON.parse(String(value)) : null;
         else if (field.type === 'number' || field.type === 'relation') payload[field.key] = value === '' || value == null ? null : Number(value);
-        else if (field.type === 'decimal') payload[field.key] = value === '' || value == null ? null : String(value);
+        else if (field.type === 'decimal') payload[field.key] = value === '' || value == null ? null : String(value).trim().replace(',', '.');
         else payload[field.key] = value === '' || value == null ? null : String(value);
       }
       if (!draft.id) {
@@ -489,16 +495,16 @@ export default function AdminPage() {
       </main>
       {draft && <div className="admin-modal-backdrop" onClick={closeEditor}><div className="admin-editor" onClick={(event) => event.stopPropagation()}>
         <div className="admin-editor-head"><div><p className="admin-eyebrow">{draft.id ? 'NDRYSHO' : 'SHTO'}</p><h2>{section === 'media' ? 'Fotografia' : config?.singular}</h2></div><button onClick={closeEditor} aria-label="Mbyll">×</button></div>
-        <form onSubmit={section === 'media' ? async (event) => {
+        <form className={section === 'materials' ? 'admin-material-form' : undefined} onSubmit={section === 'media' ? async (event) => {
           event.preventDefault(); setBusy(true); setError('');
           try { await request(`media/${draft.id}`, json('PATCH', { alt_sq: draft.alt_sq || null, alt_mk: draft.alt_mk || null, alt_en: draft.alt_en || null })); setDraft(null); setNotice('U ruajt.'); await load('media', page); }
           catch (reason) { setError(reason instanceof Error ? reason.message : 'Gabim.'); } finally { setBusy(false); }
         } : save}>
           {(section === 'media' ? [{ key: 'alt_sq', label: 'Teksti alternativ (shqip)' }, { key: 'alt_mk', label: 'Teksti alternativ (maqedonisht)' }, { key: 'alt_en', label: 'Teksti alternativ (anglisht)' }] as Field[] : config?.fields || []).map((field) => (
-            <label key={field.key} className={field.type === 'boolean' ? 'admin-checkbox' : ''}>{field.label}
+            <label key={field.key} className={field.type === 'boolean' ? 'admin-checkbox' : field.type === 'currency' || field.type === 'decimal' ? 'admin-price-field' : ''}>{field.label}
               {field.type === 'category' ? <div className="admin-category-picker" ref={categoryRef}>
                 <input type="hidden" name="category" value={String(draft.category || '')} />
-                <button type="button" className={`admin-category-trigger${categoryOpen ? ' is-open' : ''}`} aria-haspopup="listbox" aria-expanded={categoryOpen} onClick={() => setCategoryOpen((open) => !open)}>
+                <button type="button" className={`admin-category-trigger${categoryOpen ? ' is-open' : ''}`} aria-haspopup="listbox" aria-expanded={categoryOpen} onClick={() => { setCurrencyOpen(false); setCategoryOpen((open) => !open); }}>
                   <span className={draft.category ? '' : 'is-placeholder'}>{draft.category === 'PLLAKA' ? 'Pllaka' : draft.category === 'PANELE' ? 'Panele Dekoruese' : 'Zgjidhni kategorinë'}</span>
                   <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
@@ -507,12 +513,20 @@ export default function AdminPage() {
                 </div>}
               </div> :
               section === 'contacts' && field.key === 'status' ? <select value={String(draft.status || 'NEW')} onChange={(event) => updateField(field, event.target.value)}>{['NEW','READ','REPLIED','CLOSED'].map((value) => <option key={value} value={value}>{value === 'NEW' ? 'I ri' : value === 'READ' ? 'Lexuar' : value === 'REPLIED' ? 'Përgjigjur' : 'Mbyllur'}</option>)}</select> :
-                field.type === 'currency' ? <select value={String(draft.currency || '')} onChange={(event) => updateField(field, event.target.value)}><option value="">— Pa valutë —</option><option value="MKD">Den (MKD)</option><option value="EUR">Euro (EUR)</option></select> :
+                field.type === 'currency' ? <div className="admin-category-picker" ref={currencyRef}>
+                  <button type="button" className={`admin-category-trigger${currencyOpen ? ' is-open' : ''}`} aria-haspopup="listbox" aria-expanded={currencyOpen} aria-label="Valuta" onClick={() => { setCategoryOpen(false); setCurrencyOpen((open) => !open); }}>
+                    <span className={draft.currency ? '' : 'is-placeholder'}>{draft.currency === 'MKD' ? 'Den (MKD)' : draft.currency === 'EUR' ? 'Euro (EUR)' : 'Zgjidhni'}</span>
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </button>
+                  {currencyOpen && <div className="admin-category-menu" role="listbox" aria-label="Valuta">
+                    {([['', 'Pa valutë'], ['MKD', 'Den (MKD)'], ['EUR', 'Euro (EUR)']] as const).map(([value, label]) => <button key={value} type="button" role="option" aria-selected={draft.currency === value || (!draft.currency && !value)} className={draft.currency === value || (!draft.currency && !value) ? 'is-selected' : ''} onClick={() => { updateField(field, value); setCurrencyOpen(false); }}><span>{label}</span><span className="admin-category-check" aria-hidden="true">{draft.currency === value || (!draft.currency && !value) ? '✓' : ''}</span></button>)}
+                  </div>}
+                </div> :
                 section === 'contacts' ? <input value={fieldValue(field, draft[field.key]) as string} readOnly /> :
                 field.type === 'boolean' ? <input type="checkbox" checked={fieldValue(field, draft[field.key]) as boolean} onChange={(event) => updateField(field, event.target.checked)} /> :
                 field.type === 'relation' ? <select required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)}><option value="">— Zgjidhni —</option>{(options[field.resource!] || []).map((item) => <option key={item.id} value={item.id}>{titleOf(item)} (#{item.id})</option>)}</select> :
                 field.type === 'textarea' || field.type === 'json' ? <textarea rows={field.type === 'json' ? 5 : 4} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} /> :
-                <input type={field.type === 'number' || field.type === 'decimal' ? 'number' : 'text'} step={field.type === 'decimal' ? '0.01' : field.type === 'number' ? 'any' : undefined} min={field.type === 'decimal' ? '0' : undefined} required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} />}
+                <input type={field.type === 'number' ? 'number' : 'text'} inputMode={field.type === 'decimal' ? 'decimal' : undefined} step={field.type === 'number' ? 'any' : undefined} required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} />}
             </label>
           ))}
           {(section === 'projects' || section === 'materials') && <section className="admin-project-media">

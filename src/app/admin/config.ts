@@ -21,7 +21,7 @@ export const resources: Resource[] = [
   { key: 'materials', label: 'Materialet', singular: 'material', group: 'content', fields: [
     f('name', 'Emri', 'text', true), f('category', 'Kategoria', 'category', true),
     f('description', 'Përshkrimi', 'textarea'), f('color', 'Ngjyra'), f('dimensions', 'Dimensionet'),
-    f('price', 'Çmimi', 'decimal'), f('currency', 'Valuta', 'currency'),
+    f('currency', 'Valuta', 'currency'), f('price', 'Çmimi', 'decimal'),
   ] },
   { key: 'pages', label: 'Faqet', singular: 'faqe', group: 'content', fields: [
     f('page_key', 'Çelësi i faqes', 'text', true), ...tri('title', 'Titulli'),
