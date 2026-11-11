@@ -63,6 +63,8 @@ function asMaterial(raw: Raw, detail = false): Material {
   const gallery = detail && Array.isArray(raw.images) ? raw.images.map(obj) : [];
   return {
     id: String(raw.id), slug: String(raw.id), name: str(raw, 'name'),
+    price: raw.price == null ? null : String(raw.price),
+    currency: raw.currency === 'MKD' || raw.currency === 'EUR' ? raw.currency : null,
     category: materialKind(isPanel ? 'panels' : 'tiles'), categoryTitle: isPanel
       ? { sq: 'Panele Dekoruese', mk: 'Декоративни панели', en: 'Decorative Panels' }
       : { sq: 'Pllaka', mk: 'Плочки', en: 'Tiles' },

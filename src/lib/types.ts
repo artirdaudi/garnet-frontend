@@ -35,6 +35,8 @@ export interface Material {
   id: string;
   slug: string;
   name: string;
+  price: string | null;
+  currency: 'MKD' | 'EUR' | null;
   category: MaterialCategory;
   categoryTitle?: Localized;
   description: Localized;

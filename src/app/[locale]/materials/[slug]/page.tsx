@@ -7,6 +7,7 @@ import { Picture } from '@/components/media';
 import { Gallery } from '@/components/gallery';
 import { DemoNote, SectionHeading, TextLink } from '@/components/ui';
 import { ProjectGrid } from '@/components/cards';
+import { materialPrice } from '@/lib/material-price';
 export async function generateMetadata({ params }: DetailParams) {
   const locale = await routeLocale(params);
   const { slug } = await params;
@@ -42,6 +43,7 @@ export default async function MaterialDetail({ params }: DetailParams) {
       category: material.categoryTitle?.[locale] || t(locale, material.category as CopyKey),
       color: material.attributes.color[locale] || undefined,
       size: material.attributes.size || undefined,
+      ...(material.price !== null && material.currency ? { offers: { '@type': 'Offer', price: material.price, priceCurrency: material.currency, url: productUrl } } : {}),
     },
   ];
   return (
@@ -53,6 +55,7 @@ export default async function MaterialDetail({ params }: DetailParams) {
           <TextLink href={localizedPath(locale, 'materials')}>{t(locale, 'materials')}</TextLink>
           <p className="eyebrow">{material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)}</p>
           <h1>{material.name}</h1>
+          {materialPrice(material, locale) && <p className="material-detail-price">{materialPrice(material, locale)}</p>}
           <p>{material.description[locale]}</p>
           <dl className="specifications">
             {specs.map(([key, value]) => (

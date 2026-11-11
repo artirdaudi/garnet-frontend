@@ -6,6 +6,7 @@ const image = (id: string, url: string, alt: string): Media => ({ id, url, alt: 
 function example(id: string, category: 'tiles' | 'panels', name: string, photo: Media, color: Localized, size: string, description: Localized): Material {
   return {
     id: `demo-${id}`, slug: `demo-${id}`, name, category,
+    price: null, currency: null,
     categoryTitle: category === 'tiles' ? localized('Pllaka', 'Плочки', 'Tiles') : localized('Panele Dekoruese', 'Декоративни панели', 'Decorative Panels'),
     description, coverImage: photo, gallery: [photo],
     attributes: { finish: localized('', '', ''), size, application: localized('', '', ''), color },

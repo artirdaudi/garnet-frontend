@@ -222,6 +222,7 @@ export default function AdminPage() {
         if (field.type === 'boolean') payload[field.key] = value === true;
         else if (field.type === 'json') payload[field.key] = value ? JSON.parse(String(value)) : null;
         else if (field.type === 'number' || field.type === 'relation') payload[field.key] = value === '' || value == null ? null : Number(value);
+        else if (field.type === 'decimal') payload[field.key] = value === '' || value == null ? null : String(value);
         else payload[field.key] = value === '' || value == null ? null : String(value);
       }
       if (!draft.id) {
@@ -229,6 +230,7 @@ export default function AdminPage() {
       }
       if (config.key === 'materials' && !String(payload.name || '').trim()) throw new Error('Emri është i detyrueshëm.');
       if (config.key === 'materials' && !['PLLAKA', 'PANELE'].includes(String(payload.category))) throw new Error('Zgjidhni kategorinë.');
+      if (config.key === 'materials' && Boolean(payload.price != null) !== Boolean(payload.currency)) throw new Error('Vendosni çmimin dhe valutën së bashku.');
       if (config.key === 'projects' && !draft.id) {
         const title = String(payload.title || '').trim();
         if (!title) throw new Error('Titulli është i detyrueshëm.');
@@ -463,7 +465,7 @@ export default function AdminPage() {
                   </div>}
                 </div>
                 <div className="admin-project-card-details">
-                  <span><small>{section === 'materials' ? 'MATERIALI' : 'PROJEKTI'} #{project.id}</small><strong>{titleOf(project)}</strong><em>{section === 'materials' ? [project.category === 'PANELE' ? 'Panele' : 'Pllaka', project.color, project.dimensions].filter(Boolean).join(' · ') : [project.location, project.area_m2 ? `${project.area_m2} m²` : null].filter(Boolean).join(' · ')}</em></span>
+                  <span><small>{section === 'materials' ? 'MATERIALI' : 'PROJEKTI'} #{project.id}</small><strong>{titleOf(project)}</strong><em>{section === 'materials' ? [project.category === 'PANELE' ? 'Panele' : 'Pllaka', project.color, project.dimensions, project.price != null && project.currency ? `${project.price} ${project.currency === 'MKD' ? 'den' : '€'}` : null].filter(Boolean).join(' · ') : [project.location, project.area_m2 ? `${project.area_m2} m²` : null].filter(Boolean).join(' · ')}</em></span>
                   <span aria-hidden="true">Hap {section === 'materials' ? 'materialin' : 'projektin'}</span>
                 </div>
               </article>;
@@ -505,11 +507,12 @@ export default function AdminPage() {
                 </div>}
               </div> :
               section === 'contacts' && field.key === 'status' ? <select value={String(draft.status || 'NEW')} onChange={(event) => updateField(field, event.target.value)}>{['NEW','READ','REPLIED','CLOSED'].map((value) => <option key={value} value={value}>{value === 'NEW' ? 'I ri' : value === 'READ' ? 'Lexuar' : value === 'REPLIED' ? 'Përgjigjur' : 'Mbyllur'}</option>)}</select> :
+                field.type === 'currency' ? <select value={String(draft.currency || '')} onChange={(event) => updateField(field, event.target.value)}><option value="">— Pa valutë —</option><option value="MKD">Den (MKD)</option><option value="EUR">Euro (EUR)</option></select> :
                 section === 'contacts' ? <input value={fieldValue(field, draft[field.key]) as string} readOnly /> :
                 field.type === 'boolean' ? <input type="checkbox" checked={fieldValue(field, draft[field.key]) as boolean} onChange={(event) => updateField(field, event.target.checked)} /> :
                 field.type === 'relation' ? <select required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)}><option value="">— Zgjidhni —</option>{(options[field.resource!] || []).map((item) => <option key={item.id} value={item.id}>{titleOf(item)} (#{item.id})</option>)}</select> :
                 field.type === 'textarea' || field.type === 'json' ? <textarea rows={field.type === 'json' ? 5 : 4} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} /> :
-                <input type={field.type === 'number' ? 'number' : 'text'} step={field.type === 'number' ? 'any' : undefined} required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} />}
+                <input type={field.type === 'number' || field.type === 'decimal' ? 'number' : 'text'} step={field.type === 'decimal' ? '0.01' : field.type === 'number' ? 'any' : undefined} min={field.type === 'decimal' ? '0' : undefined} required={field.required} value={fieldValue(field, draft[field.key]) as string} onChange={(event) => updateField(field, event.target.value)} />}
             </label>
           ))}
           {(section === 'projects' || section === 'materials') && <section className="admin-project-media">

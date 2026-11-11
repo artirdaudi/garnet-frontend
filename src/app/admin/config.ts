@@ -1,4 +1,4 @@
-export type Field = { key: string; label: string; type?: 'text' | 'number' | 'textarea' | 'boolean' | 'relation' | 'json' | 'category'; required?: boolean; resource?: string };
+export type Field = { key: string; label: string; type?: 'text' | 'number' | 'decimal' | 'textarea' | 'boolean' | 'relation' | 'json' | 'category' | 'currency'; required?: boolean; resource?: string };
 export type Resource = { key: string; label: string; singular: string; fields: Field[]; group: 'content' | 'relations' | 'system' };
 const f = (key: string, label: string, type: Field['type'] = 'text', required = false, resource?: string): Field => ({ key, label, type, required, resource });
 const tri = (base: string, label: string, type: Field['type'] = 'text', required = false): Field[] => [
@@ -21,6 +21,7 @@ export const resources: Resource[] = [
   { key: 'materials', label: 'Materialet', singular: 'material', group: 'content', fields: [
     f('name', 'Emri', 'text', true), f('category', 'Kategoria', 'category', true),
     f('description', 'Përshkrimi', 'textarea'), f('color', 'Ngjyra'), f('dimensions', 'Dimensionet'),
+    f('price', 'Çmimi', 'decimal'), f('currency', 'Valuta', 'currency'),
   ] },
   { key: 'pages', label: 'Faqet', singular: 'faqe', group: 'content', fields: [
     f('page_key', 'Çelësi i faqes', 'text', true), ...tri('title', 'Titulli'),

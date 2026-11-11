@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Locale, Material, Project } from '@/lib/types';
 import { localizedPath, t, type CopyKey } from '@/lib/i18n';
 import { Picture } from './media';
+import { materialPrice } from '@/lib/material-price';
 export function ProjectCard({ project, locale, index = 0 }: { project: Project; locale: Locale; index?: number }) {
   return (
     <Link href={localizedPath(locale, `projects/${project.slug}`)} className="project-card">
@@ -44,6 +45,7 @@ export function MaterialCard({ material, locale }: { material: Material; locale:
           <p>
             {material.categoryTitle?.[locale] || t(locale, material.category as CopyKey)} <span>/</span> {material.attributes.size}
           </p>
+          {materialPrice(material, locale) && <p className="material-card-price">{materialPrice(material, locale)}</p>}
         </div>
       </div>
     </Link>

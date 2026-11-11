@@ -23,6 +23,8 @@ export const materials: Material[] = [
     isNew: false,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
   {
     id: 'alpina-df',
@@ -37,6 +39,8 @@ export const materials: Material[] = [
     isNew: true,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
   {
     id: 'soft',
@@ -51,6 +55,8 @@ export const materials: Material[] = [
     isNew: false,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
   {
     id: 'glow',
@@ -65,6 +71,8 @@ export const materials: Material[] = [
     isNew: true,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
   {
     id: 'osso-160',
@@ -84,6 +92,8 @@ export const materials: Material[] = [
     isNew: false,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
   {
     id: 'panel-01',
@@ -107,5 +117,7 @@ export const materials: Material[] = [
     isNew: true,
     active: true,
     isDemo: true,
+    price: null,
+    currency: null,
   },
 ];
